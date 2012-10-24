@@ -303,9 +303,10 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
                   jy = (P[k].Pos[2]-z_sink)*vx  - (P[k].Pos[0]-x_sink)*vz;
                   jz = (P[k].Pos[0]-x_sink)*vy  - (P[k].Pos[1]-y_sink)*vx;
 
-                  jx =  jx*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param);  //convert to cgs units
-                  jy =  jy*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param);
-                  jz =  jz*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param);
+		  /*Convert to cgs units*/
+                  jx =  jx*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param)*pow(All.Time,-1.5);
+                  jy =  jy*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param)*pow(All.Time,-1.5);
+                  jz =  jz*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param)*pow(All.Time,-1.5);
 
                   jtot = pow(jx*jx + jy*jy + jz*jz, 0.5);
                   jcent_sink = pow((6.67e-8*sink_Mass*(1.e10/hubble_param)*1.98892e33*d_sink_phys),0.5);
@@ -516,11 +517,12 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 
                   jx = (P[k].Pos[1]-y_sink)*vz  - (P[k].Pos[2]-z_sink)*vy;
                   jy = (P[k].Pos[2]-z_sink)*vx  - (P[k].Pos[0]-x_sink)*vz;
-                  jz = (P[k].Pos[0]-x_sink)*vy  - (P[k].Pos[1]-y_sink)*vx;                      
-                  jx =  jx*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param);  //convert to cgs units
+                  jz = (P[k].Pos[0]-x_sink)*vy  - (P[k].Pos[1]-y_sink)*vx;
 
-                  jy =  jy*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param);                      
-                  jz =  jz*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param);
+		  /*Convert to cgs units*/
+                  jx =  jx*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param)*pow(All.Time,-1.5);
+                  jy =  jy*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param)*pow(All.Time,-1.5);     
+                  jz =  jz*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param)*pow(All.Time,-1.5);
 
                   jtot = pow(jx*jx + jy*jy + jz*jz, 0.5);
                   jcent_sink = pow((6.67e-8*sink_Mass*(1.e10/hubble_param)*1.98892e33*d_sink_phys),0.5);
@@ -760,9 +762,10 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
                   jy = (P[h].Pos[2]-z_sink)*vx  - (P[h].Pos[0]-x_sink)*vz;
                   jz = (P[h].Pos[0]-x_sink)*vy  - (P[h].Pos[1]-y_sink)*vx;                     
 
-                  jx =  jx*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param);  //convert to cgs units
-                  jy =  jy*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param);                      
-                  jz =  jz*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param);
+		  /*Convert to cgs units*/
+                  jx =  jx*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param)*pow(All.Time,-1.5);
+                  jy =  jy*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param)*pow(All.Time,-1.5);
+                  jz =  jz*pow(All.Time, 0.5)*1.e5*3.086e18*1.e3*All.Time/(hubble_param)*pow(All.Time,-1.5);
 
                   jtot = pow(jx*jx + jy*jy + jz*jz, 0.5);
                   jcent_sink = pow((6.67e-8*sink_Mass*(1.e10/hubble_param)*1.98892e33*d_sink_phys),0.5);           
