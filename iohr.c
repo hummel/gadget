@@ -941,7 +941,7 @@ void write_file(char *fname, int writeTask, int lastTask)
   FILE *fd = 0;
 
 #ifdef HAVE_HDF5
-  hid_t hdf5_file = 0, hdf5_grp[6], hdf5_headergrp = 0, hdf5_dataspace_memory;
+  hid_t hdf5_file = 0, hdf5_grp[numtype], hdf5_headergrp = 0, hdf5_dataspace_memory;
   hid_t hdf5_datatype = 0, hdf5_dataspace_in_file = 0, hdf5_dataset = 0;
   herr_t hdf5_status;
   hsize_t dims[2], count[2], start[2];
@@ -1119,7 +1119,7 @@ void write_file(char *fname, int writeTask, int lastTask)
 			      hdf5_datatype = H5Tcopy(H5T_NATIVE_UINT);
 			      break;
 			    case 1:
-			      hdf5_datatype = H5Tcopy(H5T_NATIVE_FLOAT);
+			      hdf5_datatype = H5Tcopy(H5T_NATIVE_DOUBLE);
 			      break;
 			    case 2:
 			      hdf5_datatype = H5Tcopy(H5T_NATIVE_UINT64);

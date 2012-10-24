@@ -583,7 +583,7 @@ void read_file(char *fname, int readTask, int lastTask)
 					  hdf5_datatype = H5Tcopy(H5T_NATIVE_UINT);
 					  break;
 					case 1:
-					  hdf5_datatype = H5Tcopy(H5T_NATIVE_FLOAT);
+					  hdf5_datatype = H5Tcopy(H5T_NATIVE_DOUBLE);
 					  break;
 					case 2:
 					  hdf5_datatype = H5Tcopy(H5T_NATIVE_UINT64);
