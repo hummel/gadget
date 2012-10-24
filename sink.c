@@ -105,13 +105,15 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 		  All.accrete_historyTIMESTEPNUM[timestep_number][global_sink_number]= All.NumCurrentTiStep;
 		  All.sink_number_global += 1;
                   All.MassTable[0] = 0.e0;
-
-                  if(/*All.NumCurrentTiStep % 100 == 0*/ All.t_s - All.t_s0 > 3.e7 || All.NumCurrentTiStep < 10 || All.flag_sink == 1)
-                  {
-		  sinkmasses=fopen(fsinkmasses,"a");
-		  fprintf(sinkmasses,"%17.13g %8d %15.6g %15.6d %15.11g %15.11g %15.11g\n", All.Time, P[i].ID, P[i].Mass, All.NumCurrentTiStep, P[i].Pos[0], P[i].Pos[1], P[i].Pos[2]);
-                  fclose(sinkmasses);
-                  }
+		  
+                  if(All.NumCurrentTiStep % 100 == 0 ||
+		     All.NumCurrentTiStep < 10 ||
+		     All.flag_sink == 1)
+		    {
+		      sinkmasses=fopen(fsinkmasses,"a");
+		      fprintf(sinkmasses,"%17.13g %8d %15.6g %15.6d %15.11g %15.11g %15.11g\n", All.Time, P[i].ID, P[i].Mass, All.NumCurrentTiStep, P[i].Pos[0], P[i].Pos[1], P[i].Pos[2]);
+		      fclose(sinkmasses);
+		    }
 
                   //Get ID number of first sink particle (ID1)
                   sinkmasses=fopen(fsinkmasses,"r");
