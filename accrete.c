@@ -9,7 +9,7 @@
 #include "proto.h"
 #define workdir sinkdata/
 
-accrete(void)
+void accrete(void)
 {
  MPI_Barrier(MPI_COMM_WORLD);
  int j=0, sink_tot, i, k, rank_here, num, num_tot, my_rank, local_accID_arr[10], local_sink_num, sink_num_max;
@@ -78,7 +78,7 @@ for(i = 0; i < N_gas; i++)
 
 
 
-accrete_gas_AS(int accID)
+void accrete_gas_AS(int accID)
 {
   FILE *sinkmergers;
   FILE *sinkdat;

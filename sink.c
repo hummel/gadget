@@ -8,7 +8,7 @@
 #include "allvars.h"
 #include "proto.h"
 
-sink(void)
+void sink(void)
 {
   FILE *sinkmergers;
   FILE *sinkmasses;
