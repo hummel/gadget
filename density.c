@@ -737,7 +737,11 @@ void density_evaluate(int target, int mode)
                printf("Skipping sink! sink = %g, ID = %d\n", SphP[j].sink, P[j].ID);
                mass_j = 0;
                }
-
+	      if(mass_j > 10.*1.e-12 && h < 10.*All.SofteningGas) /*SINK*/
+		{
+		  printf("Skipping sink! sink = %g, ID = %d\n", SphP[j].sink, P[j].ID);
+		  mass_j = 0;
+		}
 
 #ifdef METALS_TG
               if(metal_disperse == 1) {
