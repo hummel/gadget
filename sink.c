@@ -36,11 +36,11 @@ sink(void)
   double jx, jy, jz, jtot, d_sink_phys, vx, vy, vz, vx_phys, vy_phys, vz_phys, jcent_sink;
   char fsinkmasses[200], fsinkmergers[200], fsinkdat[200], fsinkangmom[200], fsinktemp[200]; 
 
-  sprintf(fsinkmasses,"/nobackupp1/astacy/sinkmasses_hiresT");
-  sprintf(fsinkdat,"/nobackupp1/astacy/sinkdat_hiresT");
-  sprintf(fsinkangmom,"/nobackupp1/astacy/sinkangmom_hiresT");
-  sprintf(fsinktemp,"/nobackupp1/astacy/sinktemp_hiresT");
-  sprintf(fsinkmergers,"/nobackupp1/astacy/sinkmergers_hiresT");
+  sprintf(fsinkmasses,"sinkdata/sinkmasses");
+  sprintf(fsinkdat,"sinkdata/sinkdat");
+  sprintf(fsinkangmom,"sinkdata/sinkangmom");
+  sprintf(fsinktemp,"sinkdata/sinktemp");
+  sprintf(fsinkmergers,"sinkdata/sinkmergers");
 
 UnitLength_in_cm= 3.085678e21;
 UnitVelocity_in_cm_per_s= 1.0e5;

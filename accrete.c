@@ -7,7 +7,7 @@
 
 #include "allvars.h"
 #include "proto.h"
-#define workdir /nobackupp1/astacy/
+#define workdir sinkdata/
 
 accrete(void)
 {
@@ -103,9 +103,9 @@ accrete_gas_AS(int accID)
   double cgs_fac;
   char fsinkmergers[200], fsinkdat[200], fsinkangmom[200];
 
-  sprintf(fsinkdat,"/nobackupp1/astacy/sinkdat_hiresT");
-  sprintf(fsinkangmom,"/nobackupp1/astacy/sinkangmom_hiresT");
-  sprintf(fsinkmergers,"/nobackupp1/astacy/sinkmergers_hiresT");
+  sprintf(fsinkdat,"sinkdata/sinkdat");
+  sprintf(fsinkangmom,"sinkdata/sinkangmom");
+  sprintf(fsinkmergers,"sinkdata/sinkmergers");
 
 
 UnitLength_in_cm= 3.085678e21;
