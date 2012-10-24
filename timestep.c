@@ -360,8 +360,8 @@ void advance_and_find_timesteps(void)
 		  SphP[i].EntropyOut = SphP[i].Entropy;
 		}
 	      }
-
- 	      if (dt_entr > 0) {
+	      
+	      if (dt_entr > 0 && SphP[i].sink < 0.5) {
   	        SphP[i].DtEntropy = (SphP[i].Entropy - old_entropy) / dt_entr;
 	      }
 	      else {
@@ -377,7 +377,7 @@ void advance_and_find_timesteps(void)
 	      /* In case of cooling, we prevent that the entropy (and
 	         hence temperature decreases by more than a factor 0.5 */
 
-	      if(SphP[i].DtEntropy * dt_entr > -0.5 * SphP[i].Entropy)
+	      if(SphP[i].DtEntropy * dt_entr > -0.5 * SphP[i].Entropy && SphP[i].sink < 0.5)
 		SphP[i].Entropy += SphP[i].DtEntropy * dt_entr;
 	      else
 		SphP[i].Entropy *= 0.5;
@@ -399,7 +399,7 @@ void advance_and_find_timesteps(void)
 	         the middle to the end of the current step */
 
 	      dt_entr = ti_step / 2 * All.Timebase_interval;
-	      if(SphP[i].Entropy + SphP[i].DtEntropy * dt_entr < 0.5 * SphP[i].Entropy)
+	      if(SphP[i].Entropy + SphP[i].DtEntropy * dt_entr < 0.5 * SphP[i].Entropy && SphP[i].sink < 0.5)
 		SphP[i].DtEntropy = -0.5 * SphP[i].Entropy / dt_entr;
 #endif /* POLYTROPE */
 #endif /* CHEMCOOL */
