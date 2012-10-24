@@ -312,7 +312,7 @@ void advance_and_find_timesteps(void)
 	      P[i].Vel[j] += dv[j];
 	    }
 
-	  if(P[i].Type == 0 && SphP[i].sink > -4)	/* SPH stuff */
+	  if(P[i].Type == 0 && SphP[i].sink > -4 && SphP[i].sink < 0.5)	/* SPH stuff */ 
 	    {
               gam_fac = pow(All.Time,3*(5.0/3.0) -2)/pow(All.Time,3*(SphP[i].Gamma) - 2);
 	      for(j = 0; j < 3; j++)
@@ -360,8 +360,8 @@ void advance_and_find_timesteps(void)
 		  SphP[i].EntropyOut = SphP[i].Entropy;
 		}
 	      }
-	      
-	      if (dt_entr > 0 && SphP[i].sink < 0.5) {
+
+ 	      if (dt_entr > 0 && SphP[i].sink < 0.5) {
   	        SphP[i].DtEntropy = (SphP[i].Entropy - old_entropy) / dt_entr;
 	      }
 	      else {
@@ -463,7 +463,7 @@ void advance_and_find_timesteps(void)
 	  for(j = 0; j < 3; j++)	/* do the kick */
 	    P[i].Vel[j] += P[i].GravPM[j] * dt_gravkick;
 
-	  if(P[i].Type == 0  && SphP[i].sink > -4)
+	  if(P[i].Type == 0  && SphP[i].sink > -4 && SphP[i].sink < 0.5)   
 	    {
 	      if(All.ComovingIntegrationOn)
 		{
@@ -538,7 +538,7 @@ long long int get_timestep(int p,		/*!< particle index */
 
       if(P[p].Type == 0)
 	{
-        if(SphP[p].sink > -4)
+        if(SphP[p].sink > -4 && SphP[p].sink < 0.5)
          {
 #ifdef CHEMCOOL
     	    if(All.ComovingIntegrationOn)
