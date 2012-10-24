@@ -847,7 +847,7 @@ void read_header_attributes_in_hdf5(char *fname)
   H5Aread(hdf5_attribute, H5T_NATIVE_UINT, header.npartTotal);
   H5Aclose(hdf5_attribute);
 
-  hdf5_attribute = H5Aopen_name(hdf5_headergrp, "NumPart_Total_HighWord");
+  hdf5_attribute = H5Aopen_name(hdf5_headergrp, "NumPart_Total_HW");
   H5Aread(hdf5_attribute, H5T_NATIVE_UINT, header.npartTotalHighWord);
   H5Aclose(hdf5_attribute);
 
