@@ -43,9 +43,7 @@ void run(void)
       ion = 0;
       sink_tot_acc = sinkmass_sum = 0;   
       prad_avg = pres_avg = 0;
-      res_mass=.035;
-      //res_mass=0.30;
-      //res_mass = 1000.0;
+      res_mass = 0.7;
 
       a3=All.Time*All.Time*All.Time;
       a3inv=1.e0/a3;
@@ -552,9 +550,7 @@ long long int find_next_outputtime(long long int ti_curr)
   double dens_dyn, next_time;
   double nh_local, nh_max, tot_nh_max;
 
-  res_mass = 0.035;
-  //res_mass = 0.30;
-  //res_mass = 1000.0;
+  res_mass = 0.7;
   //dyn_fraction = 1.e0;
   dyn_fraction = 2.e-1;
   //dyn_fraction = 2.e-2;
