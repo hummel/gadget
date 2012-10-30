@@ -88,7 +88,7 @@ void move_particles(long long int time0, long long int time1)
 	  if(SphP[i].Hsml < All.MinGasHsml)
 	    SphP[i].Hsml = All.MinGasHsml;
 
-          if(SphP[i].Prad > 0)
+          if(SphP[i].Prad > 0 && ((All.NumCurrentTiStep+10) % 100 == 0))
            printf("predict acc_dir[0] = %lg, acc_dir[1] = %lg, acc_dir[2] = %lg, acc[0] = %lg, acc[1] = %lg, acc[2] = %lg\n", SphP[i].HydroAccel[0], SphP[i].HydroAccel[1], SphP[i].HydroAccel[2], P[i].GravAccel[0], P[i].GravAccel[1], P[i].GravAccel[2]); 
 
 #ifdef POLYTROPE

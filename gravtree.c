@@ -500,8 +500,12 @@ void set_softenings(void)
       else
         All.SofteningTable[5] = All.SofteningBndry;
 
-      for(i=6; i<numtype; i++)
-        All.SofteningTable[i] = 0.0;
+      if(numtype > 6)
+        {
+        //printf("Extra stuff in gravtree\n");
+        for(i=6; i<numtype; i++)
+          All.SofteningTable[i] = 0.0;
+        }
     }
   else
     {
@@ -512,9 +516,12 @@ void set_softenings(void)
       All.SofteningTable[4] = All.SofteningStars;
       All.SofteningTable[5] = All.SofteningBndry;
 
-      for(i=6; i<numtype; i++)
-        All.SofteningTable[i] = 0.0;
-
+      if(numtype > 6)
+        {
+        //printf("Extra stuff in gravtree\n");
+        for(i=6; i<numtype; i++)
+          All.SofteningTable[i] = 0.0;
+        }
     }
 
   for(i = 0; i < numtype; i++)
