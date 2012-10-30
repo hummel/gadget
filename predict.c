@@ -68,7 +68,7 @@ void move_particles(long long int time0, long long int time1)
       for(j = 0; j < 3; j++)
 	P[i].Pos[j] += P[i].Vel[j] * dt_drift;
 
-      if(P[i].Type = 0 && SphP[i].sink >0)
+      if(P[i].Type == 0 && SphP[i].sink >0)
         continue;
 
       if(P[i].Type == 0)
