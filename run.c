@@ -321,6 +321,9 @@ void find_next_sync_point_and_drift(void)
   }
   else hubble_a = 1.0;
 #endif
+#ifdef JH_HEATING
+  int task_max;
+#endif
 
   t0 = second();
 
@@ -488,6 +491,28 @@ void find_next_sync_point_and_drift(void)
       All.Time_last_raytrace = min_glob;
     }
 #endif
+
+
+#ifdef JH_HEATING
+        initialize_heat_ion_rates();
+	
+        for(i=0; i<=6; i++)
+          {
+           COOLR.heat_ion[i] = All.heat_ion[i];
+          }
+        MPI_Bcast(&COOLR.heat_ion, 7, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+        MPI_Bcast(&All.heat_ion, 7, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+
+        if(ThisTask == 0)
+	  {
+	    for(i=0; i<=6; i++)
+	      {
+                printf("heat_ion %d = %lg\n", i, COOLR.heat_ion[i]); 
+	      }
+	    fflush(stdout);
+	  }
+#endif
+
 
 
   while(min_glob >= All.Ti_nextoutput && All.Ti_nextoutput >= 0)

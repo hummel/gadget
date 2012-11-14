@@ -256,11 +256,15 @@ double GetCoolTime(struct sph_particle_data *current_particle, int p);
 
 #ifdef RAYTRACE_TG
 void raytrace_TG(double dt_raytrace);
-double heat_ion_rates(int rad_type, double L3, double T3);
+double calculate_heat_ion_rates(int rad_type, double L3, double T3);
 //double lum_calc(int lum_type, double star_mass, double mdot, double nu_ion); 
 double lum_calc(int lum_type, double star_mass, double mdot, double nu_ion, double dt_raytrace);
 double mdot_calc(int numtot);
 double alpha_calc(int numtot);
 void ghost(void);
+#endif
+
+#ifdef JH_HEATING
+void initialize_heat_ion_rates(void);
 #endif
 

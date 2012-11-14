@@ -1,16 +1,116 @@
-#ifdef RAYTRACE_TG
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "allvars.h"
+#ifdef JH_HEATING
+#include "proto.h"
+#endif
 
 #define pi 3.1415927
 #define c 2.99792458e10
 #define h_nu 6.6262e-27
+#define h_eV 4.13567e-15
 #define k_B 1.3806e-16
 #define pc 3.085678e18
 
+#ifdef JH_HEATING
+void initialize_heat_ion_rates()
+{
+  double J0 = 1.6e23;
+  calculate_heat_ion_rates(0, J0);
+  calculate_heat_ion_rates(1, J0);
+  calculate_heat_ion_rates(2, J0);
+  All.heat_ion[6] = 0.0; // No LW Background!
+}
+
+void calculate_heat_ion_rates(int rad_type, double J_0)
+{
+  int i = 0;
+  int N_i_steps = 100;
+  double A_0 = 6.3e-18;
+  double nu_min, nu_max, nu_ion, nu_0;
+  double ion_rate = 0, heat_rate = 0;
+  double Z, logvmin, logvmax, Freq, epsilon, sigma;
+  double F_nu, Freq_start, Freq_end, DFreq;
+
+  double E_0 = 1.0;
+  double E_min = 1.0;
+  double E_max = 10.0;
+  double Z_HI = 1.0;
+  double Z_HeI = 0.89;
+  double Z_HeII = 2.0;
+  double nu_ion_HI = 3.3e15;
+  double nu_ion_HeI = 5.95e15;
+  double nu_ion_HeII = 1.32e16;
+
+  double heat_HI = 0.0;
+  double heat_HeI = 0.0;
+  double heat_HeII = 0.0;
+  double ion_HI = 0.0;
+  double ion_HeI = 0.0;
+  double ion_HeII = 0.0;
+  
+  
+  if(rad_type == 0)
+    {
+      Z = Z_HI;
+      nu_ion = nu_ion_HI;
+    }
+  if(rad_type == 1)
+    {
+      Z = Z_HeI;
+      nu_ion = nu_ion_HeI;
+    }
+  if(rad_type == 2)
+    {
+      Z = Z_HeII;
+      nu_ion = nu_ion_HeII;
+    }
+  nu_0 = E_0 / h_eV;
+  nu_min = E_min / h_eV;
+  nu_max = E_max / h_eV;
+  logvmin = log10(nu_min);
+  logvmax = log10(nu_max);
+  for(i = 0; i < N_i_steps; i++)
+    {
+      Freq = (logvmax - logvmin) / (double)(N_i_steps) * (i + 0.5) + logvmin;
+      Freq_start = (logvmax - logvmin) / (double)(N_i_steps) * (i) + logvmin;
+      Freq_end   = (logvmax - logvmin) / (double)(N_i_steps) * (i + 1.0) + logvmin;
+      Freq       = pow(10, Freq);
+      Freq_start = pow(10, Freq_start);
+      Freq_end   = pow(10, Freq_end);
+      DFreq      = Freq_end - Freq_start;
+      
+      F_nu = 4 * pi * J_0 * pow( Freq/nu_0, -1.5);
+      epsilon = sqrt(Freq / nu_ion - 1.0);
+      sigma = A_0 / pow(Z,2.0) * pow(nu_ion/Freq,4.0) 
+	* exp(4.0 - (4.0*atan(epsilon) / epsilon)) / (1.0-exp(-2.0*PI / epsilon));
+      ion_rate += F_nu * sigma / (h_nu * Freq) * DFreq;
+      heat_rate += F_nu * sigma * ( 1.0 - nu_ion / Freq ) * DFreq;
+    }
+  if(rad_type == 0)
+    {
+      All.heat_ion[3] = ion_rate; // HI ion
+      All.heat_ion[0] = heat_rate; // HI heat
+    }
+  if(rad_type == 1)
+    {
+      All.heat_ion[4] = ion_rate; // HeI ion
+      All.heat_ion[1] = heat_rate; // HeI heat
+    }
+  if(rad_type == 2)
+    {
+      All.heat_ion[5] = ion_rate; // HeII ion
+      All.heat_ion[2] = heat_rate; // HeII heat
+    }
+
+  
+  if(ThisTask == 0)
+    printf("HI_ion= %lg HeI_ion= %lg HeII_ion=%lg HI_heat=%lg He_heat=%lg HeII_heat=%lg LW=%g \n",All.heat_ion[3], All.heat_ion[4], All.heat_ion[5], All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], All.heat_ion[6]);
+}
+#endif /* JH_HEATING */
+
+#ifdef RAYTRACE_TG
 double heat_ion_rates(int rad_type, double L3, double T3)
   {
     int i = 0;

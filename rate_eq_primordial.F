@@ -79,6 +79,13 @@ c
       REAL G_n
       parameter (G_n = GRAVITY)
 #endif
+
+#ifdef JH_SECONDARY_IONIZATION
+      REAL eV_in_cgs
+      REAL ionfrac, fH_ion, fHe_ion, fH_heat, fHe_heat
+      REAL gammaBol_HI_sec, gammaBol_HeI_sec
+      REAL gammaHeat_HI, gammaHeat_HeI
+#endif
 c
 c Unpack parameters
 c
@@ -379,41 +386,41 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
       else if(ray_flag_sun .eq. 3) then
         if(ray_H_coeff .gt. ray_coeff_min) then
-          ph38  = heat_ion(3)/ray_H_coeff/ray_H_coeff ! HI ion
-          ph39  = heat_ion(4)/ray_H_coeff/ray_H_coeff ! HeI ion
-          ph42  = heat_ion(0)/ray_H_coeff/ray_H_coeff ! HI heat
-          ph43  = heat_ion(1)/ray_H_coeff/ray_H_coeff ! HeI heat
+          ph38  = heat_ion(4)/ray_H_coeff/ray_H_coeff ! HI ion
+          ph39  = heat_ion(5)/ray_H_coeff/ray_H_coeff ! HeI ion
+          ph42  = heat_ion(1)/ray_H_coeff/ray_H_coeff ! HI heat
+          ph43  = heat_ion(2)/ray_H_coeff/ray_H_coeff ! HeI heat
         endif
         if(ray_H_coeff .gt. 0d0 .and. 
      $  ray_H_coeff .le. ray_coeff_min) then
-          ph38  = heat_ion(3)/ray_coeff_min/ray_coeff_min ! HI ion
-          ph39  = heat_ion(4)/ray_coeff_min/ray_coeff_min ! HeI ion
-          ph42  = heat_ion(0)/ray_coeff_min/ray_coeff_min ! HI heat
-          ph43  = heat_ion(1)/ray_coeff_min/ray_coeff_min ! HeI heat
+          ph38  = heat_ion(4)/ray_coeff_min/ray_coeff_min ! HI ion
+          ph39  = heat_ion(5)/ray_coeff_min/ray_coeff_min ! HeI ion
+          ph42  = heat_ion(1)/ray_coeff_min/ray_coeff_min ! HI heat
+          ph43  = heat_ion(2)/ray_coeff_min/ray_coeff_min ! HeI heat
           !print*, 'here1!', ray_coeff_min, ray_H_coeff 
         endif
         
 
         if(ray_He_coeff .gt. ray_coeff_min) then
-          ph40  = heat_ion(5)/ray_He_coeff/ray_He_coeff ! HeII ion
-          ph44  = heat_ion(2)/ray_He_coeff/ray_He_coeff ! HeII heat
+          ph40  = heat_ion(6)/ray_He_coeff/ray_He_coeff ! HeII ion
+          ph44  = heat_ion(3)/ray_He_coeff/ray_He_coeff ! HeII heat
         endif
         if(ray_He_coeff .gt. 0d0 .and. 
      $  ray_He_coeff .le. ray_coeff_min) then
-          ph40  = heat_ion(5)/ray_coeff_min/ray_coeff_min ! HeII ion
-          ph44  = heat_ion(2)/ray_coeff_min/ray_coeff_min ! HeII heat
+          ph40  = heat_ion(6)/ray_coeff_min/ray_coeff_min ! HeII ion
+          ph44  = heat_ion(3)/ray_coeff_min/ray_coeff_min ! HeII heat
           !print*, 'here2!', ray_coeff_min, ray_He_coeff
         endif
 
 
         if(ray_LW_coeff .gt. ray_coeff_min) then
-          ykdis = heat_ion(6)*fshield/ray_LW_coeff/ray_LW_coeff ! H2  diss
-          ph35 = heat_ion(6)*fshield/3.0/ray_LW_coeff/ray_LW_coeff ! HD diss
+          ykdis = heat_ion(7)*fshield/ray_LW_coeff/ray_LW_coeff ! H2  diss
+          ph35 = heat_ion(7)*fshield/3.0/ray_LW_coeff/ray_LW_coeff ! HD diss
         endif
         if(ray_LW_coeff .gt. 0d0 .and. 
      $  ray_LW_coeff .le. ray_coeff_min) then
-          ykdis = heat_ion(6)*fshield/ray_coeff_min/ray_coeff_min ! H2  diss
-          ph35 = heat_ion(6)*fshield/3.0/ray_coeff_min/ray_coeff_min ! HD diss
+          ykdis = heat_ion(7)*fshield/ray_coeff_min/ray_coeff_min ! H2  diss
+          ph35 = heat_ion(7)*fshield/3.0/ray_coeff_min/ray_coeff_min ! HD diss
           !print*, 'here3!', ray_coeff_min, ray_LW_coeff
         endif
 
@@ -428,6 +435,53 @@ c     ray_coeff_min is mininmum heating distance in physical pc
       endif
 
 #endif
+
+
+
+#ifdef JH_HEATING
+          ph38 =  ph38 + heat_ion(4)  !HI ion
+          ph39 =  ph39 + heat_ion(5)  !HeI ion
+          ph40 =  ph40 + heat_ion(6)  !HeII ion
+          ph42 =  ph42 + heat_ion(1)  !HI heat
+          ph43 =  ph43 + heat_ion(2)  !HeI heat
+          ph44 =  ph44 + heat_ion(3)  !HeII heat
+          gammaHeat_HI = ph42
+          gammaHeat_HeI = ph43
+#endif
+
+
+
+
+#ifdef JH_SECONDARY_IONIZATION
+
+          eV_in_cgs = 1.60217646e-12
+          if(abhp .gt. 0.0) then
+             ionfrac = abhp
+          else
+             ionfrac = 0.0
+          endif
+#if JH_SECONDARY_IONIZATION == 1
+          ! Shull & Van Steenberg (1985)
+          fH_ion = 0.3908 * (1.0 - ionfrac**(0.4092))**(1.7592)
+          fHe_ion = 0.0554 * (1.0 - ionfrac**(0.4614))**(1.6660)
+
+          fH_heat = 0.9971 * (1.0 - (1.0-ionfrac**(0.2263))**(1.3163))
+          fHe_heat = fH_heat
+#endif
+
+
+          gammaBol_HI_sec = (abHI*gammaHeat_HI + abHeI*gammaHeat_HeI)
+     $                     * fH_ion / (13.6 * eV_in_cgs);
+
+          gammaBol_HeI_sec = (abHeI*gammaHeat_HeI + abHI*gammaHeat_HI)
+     $                      * fHe_ion / (24.6 * eV_in_cgs);
+
+
+          ph42  = ph42 + gammaHeat_HI * fH_heat       ! HI heat
+          ph43  = ph43 + gammaHeat_HeI * fHe_heat    ! HeI heat
+
+#endif
+
 
       cr1  = crtab(1)  ! HI
       cr1a = crtab(1)  ! DI, assumed same as HI
@@ -523,6 +577,10 @@ c
      $          +  ph5  * abh2p                 ! Photodissoc:    H2+ + PH
      $          +  cr1  * abHI                  ! Cosmic ray ion.:  H + CR
      $          + ph38  * abhI                  ! Photoion: H + PH
+#ifdef JH_SECONDARY_IONIZATION
+     $          + gammaBol_HI_sec               ! Secondary ionization by e-
+#endif
+
 c
 c Molecular hydrogen
 c
@@ -601,6 +659,9 @@ c
      $              + cr6     * abheI
      $              + ph39    * abheI
      $              - ph40    * abhep
+#ifdef JH_SECONDARY_IONIZATION
+     $              + gammaBol_HeI_sec              ! Secondary ionization by e-
+#endif
       endif
 c
 c Doubly-ionized helium (He++)

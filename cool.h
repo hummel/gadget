@@ -280,7 +280,7 @@ c
 #ifdef RAYTRACE_TG
       integer ray_flag_sun
 #endif
-      REAL heat_ion(0:6)
+      REAL heat_ion(7)
 
       common /coolr/ temptab, cltab, chtab, dtcltab, dtchtab, 
      $               crtab, crphot, 
