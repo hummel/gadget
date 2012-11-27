@@ -33,19 +33,23 @@ void calculate_heat_ion_rates(int rad_type, double J_0)
   double Z, logvmin, logvmax, Freq, epsilon, sigma;
   double F_nu, Freq_start, Freq_end, DFreq;
 
-  double E_0 = 1.0;
-  double E_min = 1.0;
-  double E_max = 10.0;
+  // Energy integration limits in eV
+  double E_0 = 1.0e3;
+  double E_min = 1.0e3;
+  double E_max = 10.0e3;
+  // Atomic Number
   double Z_HI = 1.0;
   double Z_HeI = 0.89;
   double Z_HeII = 2.0;
+  // Ionization Thresholds in Hz
   double nu_ion_HI = 3.3e15;
   double nu_ion_HeI = 5.95e15;
   double nu_ion_HeII = 1.32e16;
-
+  // Heating Rates
   double heat_HI = 0.0;
   double heat_HeI = 0.0;
   double heat_HeII = 0.0;
+  // Ionization Rates
   double ion_HI = 0.0;
   double ion_HeI = 0.0;
   double ion_HeII = 0.0;
