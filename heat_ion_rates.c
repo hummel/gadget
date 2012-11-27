@@ -75,6 +75,10 @@ void calculate_heat_ion_rates(int rad_type, double J_0)
   nu_max = E_max / h_eV;
   logvmin = log10(nu_min);
   logvmax = log10(nu_max);
+  if(nu_min < nu_ion)
+    {
+      logvmin = log10(nu_ion);
+    }
   for(i = 0; i < N_i_steps; i++)
     {
       Freq = (logvmax - logvmin) / (double)(N_i_steps) * (i + 0.5) + logvmin;
