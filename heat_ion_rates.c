@@ -21,6 +21,14 @@ void initialize_heat_ion_rates()
   calculate_heat_ion_rates(1, J0);
   calculate_heat_ion_rates(2, J0);
   All.heat_ion[6] = 0.0; // No LW Background!
+  
+  if(ThisTask==0)
+    {
+      printf("Ionization Rates:\n   HI = %lg \n   HeI = %lg \n   HeII = %lg \n",
+	     All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
+      printf("Heating Rates:\n   HI = %lg \n   HeI = %lg \n   HeII = %lg \n",
+	     All.heat_ion[0], All.heat_ion[1], All.heat_ion[2]);
+    } 
 }
 
 void calculate_heat_ion_rates(int rad_type, double J_0)
@@ -45,14 +53,6 @@ void calculate_heat_ion_rates(int rad_type, double J_0)
   double nu_ion_HI = 3.3e15;
   double nu_ion_HeI = 5.95e15;
   double nu_ion_HeII = 1.32e16;
-  // Heating Rates
-  double heat_HI = 0.0;
-  double heat_HeI = 0.0;
-  double heat_HeII = 0.0;
-  // Ionization Rates
-  double ion_HI = 0.0;
-  double ion_HeI = 0.0;
-  double ion_HeII = 0.0;
   
   
   if(rad_type == 0)
@@ -111,10 +111,6 @@ void calculate_heat_ion_rates(int rad_type, double J_0)
       All.heat_ion[5] = ion_rate; // HeII ion
       All.heat_ion[2] = heat_rate; // HeII heat
     }
-
-  
-  if(ThisTask == 0)
-    printf("HI_ion= %lg HeI_ion= %lg HeII_ion=%lg HI_heat=%lg He_heat=%lg HeII_heat=%lg LW=%g \n",All.heat_ion[3], All.heat_ion[4], All.heat_ion[5], All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], All.heat_ion[6]);
 }
 #endif /* JH_HEATING */
 
