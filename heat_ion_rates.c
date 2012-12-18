@@ -16,7 +16,7 @@
 #ifdef JH_HEATING
 void initialize_heat_ion_rates()
 {
-  double J0 = 1.6e23;
+  double J0 = 6e-24;
   calculate_heat_ion_rates(0, J0);
   calculate_heat_ion_rates(1, J0);
   calculate_heat_ion_rates(2, J0);
