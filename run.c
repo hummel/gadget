@@ -20,7 +20,7 @@
  */
 void run(void)
 {
-  FILE *fd;
+  FILE *fd, *opf;
   int stopflag = 0;
   char stopfname[200], contfname[200];
   double t0, t1, tstart, tend, nh_local, nh_max, tot_nh_max, nh_max_nosink, tot_nh_max_nosink;
@@ -119,6 +119,12 @@ void run(void)
           printf("soft_table = %g\n", All.SofteningTable[0]);
           printf("min_soft = %g\n", All.MinGasHsml);
           fflush(stdout);
+
+	  opf = fopen("heating.dat", "a");
+	  fprintf(opf,"%e %e %e %e %e %e %e\n",
+		  tot_nh_max, All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
+		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
+	  fclose(opf);
         }
 
 
