@@ -28,7 +28,7 @@ void run(void)
   double res_mass, prad_avg, pres_avg, prad_tot, pres_tot, sinkmass_sum, sinkmass_sum_tot;
   double tstep2, tstep1;
   int ion, ion_tot, sink_tot_acc;
-  double a3, a3inv, hubble_param, hubble_param2, Temp, SinkCriticalDensity;
+  double a3, a3inv, z, hubble_param, hubble_param2, Temp, SinkCriticalDensity;
 
   sprintf(stopfname, "%sstop", All.OutputDir);
   sprintf(contfname, "%scont", All.OutputDir);
@@ -121,8 +121,10 @@ void run(void)
           fflush(stdout);
 
 	  opf = fopen("heating.dat", "a");
-	  fprintf(opf,"%e %e %e %e %e %e %e\n",
-		  tot_nh_max, All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
+	  z = 1.0 / (All.Time) - 1;
+	  fprintf(opf,"%e %e %e %e %e %e %e %e\n",
+		  z, tot_nh_max, 
+		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
 		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
 	  fclose(opf);
         }
