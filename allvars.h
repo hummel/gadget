@@ -261,6 +261,9 @@ extern FILE *FdCPU;        /*!< file handle for cpu.txt log-file. */
 /*Sink*/
 extern FILE *FdSink;        /*!< file handle for sink.txt log-file. */
 
+#ifdef JH_HEATING
+extern FILE *FdHeat;  /*!< file handle for heating.dat log-file. */
+#endif
 
 #ifdef FORCETEST
 extern FILE *FdForceTest;  /*!< file handle for forcetest.txt log-file. */
@@ -542,6 +545,9 @@ extern struct global_data_all_processes
   char TimingsFile[MAXLEN_FILENAME];           /*!< name of file with performance metrics of gravitational tree algorithm */
   char RestartFile[MAXLEN_FILENAME];           /*!< basename of restart-files */
   /*SINK*/
+#ifdef JH_HEATING
+  char HeatFile[MAXLEN_FILENAME];               /*!< name of file with heating info */
+#endif
   char SinkFile[MAXLEN_FILENAME];               /*!< name of file with sink statistics */
   char ResubmitCommand[MAXLEN_FILENAME];       /*!< name of script-file that will be executed for automatic restart */
   char OutputListFilename[MAXLEN_FILENAME];    /*!< name of file with list of desired output times */

@@ -96,6 +96,10 @@ FILE *FdCPU;        /*!< file handle for cpu.txt log-file. */
 /*Sink*/
 FILE *FdSink;        /*!< file handle for sink.txt log-file. */
 
+#ifdef JH_HEATING
+FILE *FdHeat;        /*!< file handle for heating.dat log-file. */
+#endif 
+
 #ifdef FORCETEST
 FILE *FdForceTest;  /*!< file handle for forcetest.txt log-file. */
 #endif

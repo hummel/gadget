@@ -65,7 +65,7 @@ void   dump_particles(void);
 void   empty_read_buffer(enum iofields blocknr, int offset, int pc, int type);
 void   endrun(int);
 void   energy_statistics(void);
-void   every_timestep_stuff(void);
+void   every_timestep_stuff(double dens_max);
 
 void   ewald_corr(double dx, double dy, double dz, double *fper);
 void   ewald_force(int ii, int jj, int kk, double x[3], double force[3]);

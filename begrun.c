@@ -201,6 +201,10 @@ void begrun(void)
       strcpy(All.CpuFile, all.CpuFile);
       strcpy(All.TimingsFile, all.TimingsFile);
       strcpy(All.SnapshotFileBase, all.SnapshotFileBase);
+#ifdef JH_HEATING
+      strcpy(All.HeatFile, all.HeatFile);
+#endif
+
 
       if(All.TimeMax != all.TimeMax)
 	readjust_timebase(All.TimeMax, all.TimeMax);
@@ -336,6 +340,7 @@ void open_outputfiles(void)
       printf("error in opening file '%s'\n", buf);
       endrun(1);
     }
+
 /*SINK*/
   sprintf(buf, "%s%s", All.OutputDir, All.SinkFile);
   if(!(FdSink = fopen(buf, mode)))
@@ -344,6 +349,16 @@ void open_outputfiles(void)
       endrun(1);
     }
 /*SINK*/
+
+#ifdef JH_HEATING
+  sprintf(buf, "%s%s", All.OutputDir, All.HeatFile);
+  if(!(FdHeat = fopen(buf, mode)))
+    {
+      printf("error in opening file '%s'\n", buf);
+      endrun(1);
+    }
+#endif
+
 #ifdef FORCETEST
   if(RestartFlag == 0)
     {
@@ -372,6 +387,9 @@ void close_outputfiles(void)
   fclose(FdTimings);
 /*SINK*/
   fclose(FdSink);
+#ifdef JH_HEATING
+  fclose(FdHeat);
+#endif
 #ifdef FORCETEST
   fclose(FdForceTest);
 #endif
@@ -466,6 +484,12 @@ void read_parameter_file(char *fname)
       strcpy(tag[nt], "RestartFile");
       addr[nt] = All.RestartFile;
       id[nt++] = STRING;
+
+#ifdef JH_HEATING
+      strcpy(tag[nt], "HeatFile");
+      addr[nt] = All.HeatFile;
+      id[nt++] = STRING;
+#endif
       /*SINK*/
       strcpy(tag[nt], "SinkFile");
       addr[nt] = All.SinkFile;

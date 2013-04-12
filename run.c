@@ -135,7 +135,7 @@ void run(void)
 					 * at the desired time.
 					 */
 
-      every_timestep_stuff();	/* write some info to log-files */
+      every_timestep_stuff(tot_nh_max);	/* write some info to log-files */
 
       domain_Decomposition();	/* do domain decomposition if needed */
 
@@ -314,6 +314,9 @@ void find_next_sync_point_and_drift(void)
   long long int min_glob, min;
   double timeold;
   double t0, t1;
+#ifdef JH_HEATING
+  int task_max;
+#endif
 #ifdef RAYTRACE_TG
   int task_max, loc_max, tot_loc_max, list_loc_max[NTask], n_check;
   double hubble_a, dt_raytrace, nh_local, nh_max, tot_nh_max, mass_max, tot_mass_max, ray_dist2, list_nh_max[NTask], list_mass_max[NTask];
@@ -328,10 +331,7 @@ void find_next_sync_point_and_drift(void)
     hubble_a = All.Hubble * All.HubbleParam * sqrt(hubble_a);
   }
   else hubble_a = 1.0;
-#endif
-#ifdef JH_HEATING
-  int task_max;
-#endif
+#endif /*RAYTRACE_TG*/
 
   t0 = second();
 
@@ -739,7 +739,7 @@ long long int find_next_outputtime(long long int ti_curr)
  *  FdInfo, we just list the timesteps that have been done, while in FdCPU the
  *  cumulative cpu-time consumption in various parts of the code is stored.
  */
-void every_timestep_stuff(void)
+void every_timestep_stuff(double dens_max)
 {
   double z;
 
@@ -754,6 +754,12 @@ void every_timestep_stuff(void)
 	  printf("\nBegin Step %d, Time: %15.11g, Redshift: %g, Systemstep: %g, Dloga: %g\n", All.NumCurrentTiStep,
 		 All.Time, z, All.TimeStep, log(All.Time) - log(All.Time - All.TimeStep));
 	  fflush(FdInfo);
+
+	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
+		  z, dens_max, 
+		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
+		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
+	  fflush(FdHeat);
 	}
       else
 	{
@@ -761,6 +767,12 @@ void every_timestep_stuff(void)
 		  All.TimeStep);
 	  printf("\nBegin Step %d, Time: %15.11g, Systemstep: %g\n", All.NumCurrentTiStep, All.Time, All.TimeStep);
 	  fflush(FdInfo);
+
+	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
+		  All.Time, dens_max, 
+		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
+		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
+	  fflush(FdHeat);
 	}
 
       fprintf(FdCPU, "Step %d, Time: %g, CPUs: %d\n", All.NumCurrentTiStep, All.Time, NTask);
