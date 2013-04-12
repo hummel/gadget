@@ -16,7 +16,14 @@
 #ifdef JH_HEATING
 void initialize_heat_ion_rates()
 {
-  double J0 = 1e-22;
+  
+  double z, J0;
+  J0 = 9.89e-19;
+  z = 1.0 / (All.Time) - 1;
+  if(z > 35)
+    {
+      J0 = J0 * exp((35 - z) / 5);
+    }
   calculate_heat_ion_rates(0, J0);
   calculate_heat_ion_rates(1, J0);
   calculate_heat_ion_rates(2, J0);
