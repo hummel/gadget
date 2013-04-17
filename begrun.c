@@ -960,6 +960,13 @@ void read_parameter_file(char *fname)
       id[nt++]=DOUBLE;
 #endif 
 
+      /* X-ray background intensity */
+#ifdef JH_HEATING
+      strcpy(tag[nt], "xrbIntensity");
+      addr[nt] = &All.xrbIntensity;
+      id[nt++] = DOUBLE;
+#endif
+
        /* SINK: add parameters for sinks */
       strcpy(tag[nt], "HSinkCreate");
       addr[nt] = &All.HSinkCreate;

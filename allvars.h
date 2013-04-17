@@ -574,6 +574,11 @@ extern struct global_data_all_processes
   FLOAT EOSEnergy[MAX_SIZE_EOS_TABLE];
 #endif
 
+   /* X-ray background intensity */
+#ifdef JH_HEATING
+  double xrbIntensity;
+#endif
+
    /* SINK: add variables for sink particles */
 
   double RInner;

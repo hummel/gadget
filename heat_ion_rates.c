@@ -18,7 +18,7 @@ void initialize_heat_ion_rates()
 {
   
   double z, J0;
-  J0 = 9.89e-19;
+  J0 = All.xrbIntensity;
   z = 1.0 / (All.Time) - 1;
   if(z > 35)
     {
