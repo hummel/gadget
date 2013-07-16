@@ -485,11 +485,25 @@ void read_parameter_file(char *fname)
       addr[nt] = All.RestartFile;
       id[nt++] = STRING;
 
+      /* X-ray background intensity */
 #ifdef JH_HEATING
       strcpy(tag[nt], "HeatFile");
       addr[nt] = All.HeatFile;
       id[nt++] = STRING;
-#endif
+
+      strcpy(tag[nt], "xrbIntensity");
+      addr[nt] = &All.xrbIntensity;
+      id[nt++] = DOUBLE;
+
+#ifdef JH_VARIABLE_HEATING
+      strcpy(tag[nt], "xrbFile");
+      addr[nt] = All.xrbFile;
+      id[nt++] = STRING;
+
+#endif /* JH_VARIABLE_HEATING */
+#endif /* JH_HEATING */
+
+
       /*SINK*/
       strcpy(tag[nt], "SinkFile");
       addr[nt] = All.SinkFile;
@@ -960,13 +974,6 @@ void read_parameter_file(char *fname)
       id[nt++]=DOUBLE;
 #endif 
 
-      /* X-ray background intensity */
-#ifdef JH_HEATING
-      strcpy(tag[nt], "xrbIntensity");
-      addr[nt] = &All.xrbIntensity;
-      id[nt++] = DOUBLE;
-#endif
-
        /* SINK: add parameters for sinks */
       strcpy(tag[nt], "HSinkCreate");
       addr[nt] = &All.HSinkCreate;
@@ -1099,6 +1106,13 @@ void read_parameter_file(char *fname)
 	errorFlag += read_outputlist(All.OutputListFilename);
       else
 	All.OutputListLength = 0;
+
+#ifdef JH_HEATING
+#ifdef JH_VARIABLE_HEATING
+      if(errorFlag == 0)
+	errorFlag += read_xrbIntensity(All.xrbFile);
+#endif /* JH_VARIABLE_HEATING */
+#endif /* JH_HEATING */
     }
 
   MPI_Bcast(&errorFlag, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -1231,6 +1245,40 @@ int read_outputlist(char *fname)
 
   return 0;
 }
+
+#ifdef JH_HEATING
+#ifdef JH_VARIABLE_HEATING
+/*! this function reads a table containing the average X-ray background intensity
+ *  as a function of redshift. Table must be sorted in descending redshift order,
+ *  and may not contain more than MAXLEN_XRBLIST entries.
+ */
+int read_xrbIntensity(char *fname)
+{
+  FILE *fd;
+
+  if(!(fd = fopen(fname, "r")))
+    {
+      printf("can't read X-ray background intensity list in file '%s'\n", fname);
+      return 1;
+    }
+
+  All.xrbLength = 0;
+  do
+    {
+      if(fscanf(fd, "%lg %lg", &All.Jz[All.xrbLength], &All.Jxr[All.xrbLength]) == 2)
+	All.xrbLength++;
+      else
+	break;
+    }
+  while(All.xrbLength < MAXLEN_XRBLIST);
+  fclose(fd);
+
+  printf("\nfound %d redshift points in X-ray background intensity list.\n", All.xrbLength);
+
+  return 0;
+}
+#endif /* JH_VARIABLE_HEATING */
+#endif /* JH_HEATING */
 
 
 /*! If a restart from restart-files is carried out where the TimeMax

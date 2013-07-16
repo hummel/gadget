@@ -266,5 +266,10 @@ void ghost(void);
 
 #ifdef JH_HEATING
 void initialize_heat_ion_rates(void);
-#endif
+void calculate_heat_ion_rates(int rad_type, double J_0);
+#ifdef JH_VARIABLE_HEATING
+int    read_xrbIntensity(char *fname);
+#endif /* JH_VARIABLE_HEATING */
+#endif /* JH_HEATING */
+
 

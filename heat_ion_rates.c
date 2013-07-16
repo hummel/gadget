@@ -16,17 +16,23 @@
 #ifdef JH_HEATING
 void initialize_heat_ion_rates()
 {
-  
+  int i;
   double z, J0;
   J0 = All.xrbIntensity;
+
 #ifdef JH_VARIABLE_HEATING
   /* Variable background ramping up from high z */
   z = 1.0 / (All.Time) - 1;
-  if(z > 35)
+  i = 0;
+  do
     {
-      J0 = J0 * exp((35 - z) / 5);
+      J0 = All.Jxr[i];
+      i++;
     }
-#endif
+  while(All.Jz[i] > z);
+  J0 = J0 * All.xrbIntensity;
+#endif /* JH_VARIABLE_HEATING */
+
   calculate_heat_ion_rates(0, J0);
   calculate_heat_ion_rates(1, J0);
   calculate_heat_ion_rates(2, J0);
@@ -34,6 +40,7 @@ void initialize_heat_ion_rates()
   
   if(ThisTask==0)
     {
+      printf("\nz: %lg  J0: %lg\n", z, J0);
       printf("Ionization Rates:\n   HI = %lg \n   HeI = %lg \n   HeII = %lg \n",
 	     All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
       printf("Heating Rates:\n   HI = %lg \n   HeI = %lg \n   HeII = %lg \n",
