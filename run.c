@@ -495,7 +495,7 @@ void find_next_sync_point_and_drift(void)
 
 #ifdef JH_HEATING
         initialize_heat_ion_rates();
-	
+
         for(i=0; i<=6; i++)
           {
            COOLR.heat_ion[i] = All.heat_ion[i];
@@ -507,7 +507,7 @@ void find_next_sync_point_and_drift(void)
 	  {
 	    for(i=0; i<=6; i++)
 	      {
-                printf("heat_ion %d = %lg\n", i, COOLR.heat_ion[i]); 
+                printf("COOLR heat_ion %d = %lg\n", i, COOLR.heat_ion[i]); 
 	      }
 	    fflush(stdout);
 	  }
@@ -747,11 +747,13 @@ void every_timestep_stuff(double dens_max)
 		 All.Time, z, All.TimeStep, log(All.Time) - log(All.Time - All.TimeStep));
 	  fflush(FdInfo);
 
+#ifdef JH_HEATING
 	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
 		  z, dens_max, 
 		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
 		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
 	  fflush(FdHeat);
+#endif /* JH_HEATING */
 	}
       else
 	{
@@ -760,11 +762,13 @@ void every_timestep_stuff(double dens_max)
 	  printf("\nBegin Step %d, Time: %15.11g, Systemstep: %g\n", All.NumCurrentTiStep, All.Time, All.TimeStep);
 	  fflush(FdInfo);
 
+#ifdef JH_HEATING
 	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
 		  All.Time, dens_max, 
 		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
 		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
 	  fflush(FdHeat);
+#endif /* JH_HEATING */
 	}
 
       fprintf(FdCPU, "Step %d, Time: %g, CPUs: %d\n", All.NumCurrentTiStep, All.Time, NTask);
