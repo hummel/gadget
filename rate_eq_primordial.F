@@ -80,7 +80,7 @@ c
       parameter (G_n = GRAVITY)
 #endif
 
-#ifdef JH_SECONDARY_IONIZATION
+#ifdef XRAY_SECONDARY_IONIZATION
       REAL eV_in_cgs
       REAL ionfrac, fH_ion, fHe_ion, fH_heat, fHe_heat
       REAL gammaBol_HI_sec, gammaBol_HeI_sec
@@ -452,7 +452,7 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
 
 
-#ifdef JH_SECONDARY_IONIZATION
+#ifdef XRAY_SECONDARY_IONIZATION
 
           eV_in_cgs = 1.60217646e-12
           if(abhp .gt. 0.0) then
@@ -460,7 +460,7 @@ c     ray_coeff_min is mininmum heating distance in physical pc
           else
              ionfrac = 0.0
           endif
-#if JH_SECONDARY_IONIZATION == 1
+#if XRAY_SECONDARY_IONIZATION == 1
           ! Shull & Van Steenberg (1985)
           fH_ion = 0.3908 * (1.0 - ionfrac**(0.4092))**(1.7592)
           fHe_ion = 0.0554 * (1.0 - ionfrac**(0.4614))**(1.6660)
@@ -577,7 +577,7 @@ c
      $          +  ph5  * abh2p                 ! Photodissoc:    H2+ + PH
      $          +  cr1  * abHI                  ! Cosmic ray ion.:  H + CR
      $          + ph38  * abhI                  ! Photoion: H + PH
-#ifdef JH_SECONDARY_IONIZATION
+#ifdef XRAY_SECONDARY_IONIZATION
      $          + gammaBol_HI_sec               ! Secondary ionization by e-
 #endif
 
@@ -659,7 +659,7 @@ c
      $              + cr6     * abheI
      $              + ph39    * abheI
      $              - ph40    * abhep
-#ifdef JH_SECONDARY_IONIZATION
+#ifdef XRAY_SECONDARY_IONIZATION
      $              + gammaBol_HeI_sec              ! Secondary ionization by e-
 #endif
       endif

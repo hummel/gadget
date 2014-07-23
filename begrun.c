@@ -495,12 +495,12 @@ void read_parameter_file(char *fname)
       addr[nt] = &All.xrbIntensity;
       id[nt++] = DOUBLE;
 
-#ifdef JH_VARIABLE_HEATING
+#ifdef XRAY_VARIABLE_HEATING
       strcpy(tag[nt], "xrbFile");
       addr[nt] = All.xrbFile;
       id[nt++] = STRING;
 
-#endif /* JH_VARIABLE_HEATING */
+#endif /* XRAY_VARIABLE_HEATING */
 #endif /* JH_HEATING */
 
 
@@ -1108,10 +1108,10 @@ void read_parameter_file(char *fname)
 	All.OutputListLength = 0;
 
 #ifdef JH_HEATING
-#ifdef JH_VARIABLE_HEATING
+#ifdef XRAY_VARIABLE_HEATING
       if(errorFlag == 0)
 	errorFlag += read_xrbIntensity(All.xrbFile);
-#endif /* JH_VARIABLE_HEATING */
+#endif /* XRAY_VARIABLE_HEATING */
 #endif /* JH_HEATING */
     }
 
@@ -1247,7 +1247,7 @@ int read_outputlist(char *fname)
 }
 
 #ifdef JH_HEATING
-#ifdef JH_VARIABLE_HEATING
+#ifdef XRAY_VARIABLE_HEATING
 /*! this function reads a table containing the average X-ray background intensity
  *  as a function of redshift. Table must be sorted in descending redshift order,
  *  and may not contain more than MAXLEN_XRBLIST entries.
@@ -1277,7 +1277,7 @@ int read_xrbIntensity(char *fname)
 
   return 0;
 }
-#endif /* JH_VARIABLE_HEATING */
+#endif /* XRAY_VARIABLE_HEATING */
 #endif /* JH_HEATING */
 
 

@@ -547,9 +547,9 @@ extern struct global_data_all_processes
   /*SINK*/
 #ifdef JH_HEATING
   char HeatFile[MAXLEN_FILENAME];               /*!< name of file with heating info */
-#ifdef JH_VARIABLE_HEATING
+#ifdef XRAY_VARIABLE_HEATING
   char xrbFile[MAXLEN_FILENAME];               /*!< name of file with Xray background intensity info */
-#endif /* JH_VARIABLE_HEATING */
+#endif /* XRAY_VARIABLE_HEATING */
 #endif /* JH_HEATING */
   char SinkFile[MAXLEN_FILENAME];               /*!< name of file with sink statistics */
   char ResubmitCommand[MAXLEN_FILENAME];       /*!< name of script-file that will be executed for automatic restart */
@@ -580,11 +580,11 @@ extern struct global_data_all_processes
    /* X-ray background intensity */
 #ifdef JH_HEATING
   double xrbIntensity;
-#ifdef JH_VARIABLE_HEATING
+#ifdef XRAY_VARIABLE_HEATING
 #define MAXLEN_XRBLIST      5000   /*!< maxmimum number of entries in X-ray background intensity file */
   double Jz[MAXLEN_XRBLIST], Jxr[MAXLEN_XRBLIST];
   int xrbLength;
-#endif /* JH_VARIABLE_HEATING */
+#endif /* XRAY_VARIABLE_HEATING */
 #endif /* JH_HEATING */
 
    /* SINK: add variables for sink particles */
