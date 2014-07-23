@@ -80,11 +80,13 @@ c
       parameter (G_n = GRAVITY)
 #endif
 
+#ifdef JH_HEATING
+      REAL gammaHeat_HI, gammaHeat_HeI
 #ifdef XRAY_SECONDARY_IONIZATION
       REAL eV_in_cgs
       REAL ionfrac, fH_ion, fHe_ion, fH_heat, fHe_heat
       REAL gammaBol_HI_sec, gammaBol_HeI_sec
-      REAL gammaHeat_HI, gammaHeat_HeI
+#endif
 #endif
 c
 c Unpack parameters
@@ -447,19 +449,15 @@ c     ray_coeff_min is mininmum heating distance in physical pc
           ph44 =  ph44 + heat_ion(3)  !HeII heat
           gammaHeat_HI = ph42
           gammaHeat_HeI = ph43
-#endif
-
-
-
 
 #ifdef XRAY_SECONDARY_IONIZATION
-
           eV_in_cgs = 1.60217646e-12
           if(abhp .gt. 0.0) then
              ionfrac = abhp
           else
              ionfrac = 0.0
           endif
+
 #if XRAY_SECONDARY_IONIZATION == 1
           ! Shull & Van Steenberg (1985)
           fH_ion = 0.3908 * (1.0 - ionfrac**(0.4092))**(1.7592)
@@ -468,8 +466,6 @@ c     ray_coeff_min is mininmum heating distance in physical pc
           fH_heat = 0.9971 * (1.0 - (1.0-ionfrac**(0.2263))**(1.3163))
           fHe_heat = fH_heat
 #endif
-
-
           gammaBol_HI_sec = (abHI*gammaHeat_HI + abHeI*gammaHeat_HeI)
      $                     * fH_ion / (13.6 * eV_in_cgs);
 
@@ -480,6 +476,7 @@ c     ray_coeff_min is mininmum heating distance in physical pc
           ph42  = ph42 + gammaHeat_HI * fH_heat       ! HI heat
           ph43  = ph43 + gammaHeat_HeI * fHe_heat    ! HeI heat
 
+#endif
 #endif
 
 
@@ -577,10 +574,11 @@ c
      $          +  ph5  * abh2p                 ! Photodissoc:    H2+ + PH
      $          +  cr1  * abHI                  ! Cosmic ray ion.:  H + CR
      $          + ph38  * abhI                  ! Photoion: H + PH
+#ifdef JH_HEATING
 #ifdef XRAY_SECONDARY_IONIZATION
      $          + gammaBol_HI_sec               ! Secondary ionization by e-
 #endif
-
+#endif
 c
 c Molecular hydrogen
 c
@@ -659,8 +657,10 @@ c
      $              + cr6     * abheI
      $              + ph39    * abheI
      $              - ph40    * abhep
+#ifdef JH_HEATING
 #ifdef XRAY_SECONDARY_IONIZATION
      $              + gammaBol_HeI_sec              ! Secondary ionization by e-
+#endif
 #endif
       endif
 c
