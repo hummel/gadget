@@ -201,7 +201,7 @@ void begrun(void)
       strcpy(All.CpuFile, all.CpuFile);
       strcpy(All.TimingsFile, all.TimingsFile);
       strcpy(All.SnapshotFileBase, all.SnapshotFileBase);
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
       strcpy(All.HeatFile, all.HeatFile);
 #endif
 
@@ -350,7 +350,7 @@ void open_outputfiles(void)
     }
 /*SINK*/
 
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
   sprintf(buf, "%s%s", All.OutputDir, All.HeatFile);
   if(!(FdHeat = fopen(buf, mode)))
     {
@@ -387,7 +387,7 @@ void close_outputfiles(void)
   fclose(FdTimings);
 /*SINK*/
   fclose(FdSink);
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
   fclose(FdHeat);
 #endif
 #ifdef FORCETEST
@@ -486,7 +486,7 @@ void read_parameter_file(char *fname)
       id[nt++] = STRING;
 
       /* X-ray background intensity */
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
       strcpy(tag[nt], "HeatFile");
       addr[nt] = All.HeatFile;
       id[nt++] = STRING;
@@ -501,7 +501,7 @@ void read_parameter_file(char *fname)
       id[nt++] = STRING;
 
 #endif /* XRAY_VARIABLE_HEATING */
-#endif /* JH_HEATING */
+#endif /* XRAY_ION_HEAT */
 
 
       /*SINK*/
@@ -1107,12 +1107,12 @@ void read_parameter_file(char *fname)
       else
 	All.OutputListLength = 0;
 
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
 #ifdef XRAY_VARIABLE_HEATING
       if(errorFlag == 0)
 	errorFlag += read_xrbIntensity(All.xrbFile);
 #endif /* XRAY_VARIABLE_HEATING */
-#endif /* JH_HEATING */
+#endif /* XRAY_ION_HEAT */
     }
 
   MPI_Bcast(&errorFlag, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -1246,7 +1246,7 @@ int read_outputlist(char *fname)
   return 0;
 }
 
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
 #ifdef XRAY_VARIABLE_HEATING
 /*! this function reads a table containing the average X-ray background intensity
  *  as a function of redshift. Table must be sorted in descending redshift order,
@@ -1278,7 +1278,7 @@ int read_xrbIntensity(char *fname)
   return 0;
 }
 #endif /* XRAY_VARIABLE_HEATING */
-#endif /* JH_HEATING */
+#endif /* XRAY_ION_HEAT */
 
 
 /*! If a restart from restart-files is carried out where the TimeMax

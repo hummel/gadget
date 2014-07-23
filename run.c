@@ -306,7 +306,7 @@ void find_next_sync_point_and_drift(void)
   long long int min_glob, min;
   double timeold;
   double t0, t1;
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
   int task_max;
 #endif
 #ifdef RAYTRACE_TG
@@ -493,7 +493,7 @@ void find_next_sync_point_and_drift(void)
 #endif
 
 
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
         initialize_heat_ion_rates();
 
         for(i=0; i<=6; i++)
@@ -747,13 +747,13 @@ void every_timestep_stuff(double dens_max)
 		 All.Time, z, All.TimeStep, log(All.Time) - log(All.Time - All.TimeStep));
 	  fflush(FdInfo);
 
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
 	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
 		  z, dens_max, 
 		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
 		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
 	  fflush(FdHeat);
-#endif /* JH_HEATING */
+#endif /* XRAY_ION_HEAT */
 	}
       else
 	{
@@ -762,13 +762,13 @@ void every_timestep_stuff(double dens_max)
 	  printf("\nBegin Step %d, Time: %15.11g, Systemstep: %g\n", All.NumCurrentTiStep, All.Time, All.TimeStep);
 	  fflush(FdInfo);
 
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
 	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
 		  All.Time, dens_max, 
 		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
 		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
 	  fflush(FdHeat);
-#endif /* JH_HEATING */
+#endif /* XRAY_ION_HEAT */
 	}
 
       fprintf(FdCPU, "Step %d, Time: %g, CPUs: %d\n", All.NumCurrentTiStep, All.Time, NTask);

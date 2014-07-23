@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "allvars.h"
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
 #include "proto.h"
 #endif
 
@@ -13,7 +13,7 @@
 #define k_B 1.3806e-16
 #define pc 3.085678e18
 
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
 void initialize_heat_ion_rates()
 {
   int i;
@@ -129,7 +129,7 @@ void calculate_heat_ion_rates(int rad_type, double J_0)
       All.heat_ion[2] = heat_rate; // HeII heat
     }
 }
-#endif /* JH_HEATING */
+#endif /* XRAY_ION_HEAT */
 
 #ifdef RAYTRACE_TG
 double heat_ion_rates(int rad_type, double L3, double T3)

@@ -264,12 +264,12 @@ double alpha_calc(int numtot);
 void ghost(void);
 #endif
 
-#ifdef JH_HEATING
+#ifdef XRAY_ION_HEAT
 void initialize_heat_ion_rates(void);
 void calculate_heat_ion_rates(int rad_type, double J_0);
 #ifdef XRAY_VARIABLE_HEATING
 int    read_xrbIntensity(char *fname);
 #endif /* XRAY_VARIABLE_HEATING */
-#endif /* JH_HEATING */
+#endif /* XRAY_ION_HEAT */
 
 
