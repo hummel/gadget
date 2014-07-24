@@ -261,7 +261,7 @@ extern FILE *FdCPU;        /*!< file handle for cpu.txt log-file. */
 /*Sink*/
 extern FILE *FdSink;        /*!< file handle for sink.txt log-file. */
 
-#ifdef XRAY_ION_HEAT
+#ifdef XRAY_BACKGROUND
 extern FILE *FdHeat;  /*!< file handle for heating.dat log-file. */
 #endif
 
@@ -545,12 +545,12 @@ extern struct global_data_all_processes
   char TimingsFile[MAXLEN_FILENAME];           /*!< name of file with performance metrics of gravitational tree algorithm */
   char RestartFile[MAXLEN_FILENAME];           /*!< basename of restart-files */
   /*SINK*/
-#ifdef XRAY_ION_HEAT
+#ifdef XRAY_BACKGROUND
   char HeatFile[MAXLEN_FILENAME];               /*!< name of file with heating info */
 #ifdef XRAY_VARIABLE_HEATING
   char xrbFile[MAXLEN_FILENAME];               /*!< name of file with Xray background intensity info */
 #endif /* XRAY_VARIABLE_HEATING */
-#endif /* XRAY_ION_HEAT */
+#endif /* XRAY_BACKGROUND */
   char SinkFile[MAXLEN_FILENAME];               /*!< name of file with sink statistics */
   char ResubmitCommand[MAXLEN_FILENAME];       /*!< name of script-file that will be executed for automatic restart */
   char OutputListFilename[MAXLEN_FILENAME];    /*!< name of file with list of desired output times */
@@ -578,14 +578,14 @@ extern struct global_data_all_processes
 #endif
 
    /* X-ray background intensity */
-#ifdef XRAY_ION_HEAT
+#ifdef XRAY_BACKGROUND
   double xrbIntensity;
 #ifdef XRAY_VARIABLE_HEATING
 #define MAXLEN_XRBLIST      5000   /*!< maxmimum number of entries in X-ray background intensity file */
   double Jz[MAXLEN_XRBLIST], Jxr[MAXLEN_XRBLIST];
   int xrbLength;
 #endif /* XRAY_VARIABLE_HEATING */
-#endif /* XRAY_ION_HEAT */
+#endif /* XRAY_BACKGROUND */
 
    /* SINK: add variables for sink particles */
 

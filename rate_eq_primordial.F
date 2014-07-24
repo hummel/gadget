@@ -80,7 +80,7 @@ c
       parameter (G_n = GRAVITY)
 #endif
 
-#ifdef XRAY_ION_HEAT
+#ifdef XRAY_BACKGROUND
       REAL gammaHeat_HI, gammaHeat_HeI
 #ifdef XRAY_SECONDARY_IONIZATION
       REAL eV_in_cgs
@@ -440,7 +440,7 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
 
 
-#ifdef XRAY_ION_HEAT
+#ifdef XRAY_BACKGROUND
           ph38 =  ph38 + heat_ion(4)  !HI ion
           ph39 =  ph39 + heat_ion(5)  !HeI ion
           ph40 =  ph40 + heat_ion(6)  !HeII ion
@@ -574,7 +574,7 @@ c
      $          +  ph5  * abh2p                 ! Photodissoc:    H2+ + PH
      $          +  cr1  * abHI                  ! Cosmic ray ion.:  H + CR
      $          + ph38  * abhI                  ! Photoion: H + PH
-#ifdef XRAY_ION_HEAT
+#ifdef XRAY_BACKGROUND
 #ifdef XRAY_SECONDARY_IONIZATION
      $          + gammaBol_HI_sec               ! Secondary ionization by e-
 #endif
@@ -657,7 +657,7 @@ c
      $              + cr6     * abheI
      $              + ph39    * abheI
      $              - ph40    * abhep
-#ifdef XRAY_ION_HEAT
+#ifdef XRAY_BACKGROUND
 #ifdef XRAY_SECONDARY_IONIZATION
      $              + gammaBol_HeI_sec              ! Secondary ionization by e-
 #endif

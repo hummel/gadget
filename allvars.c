@@ -96,7 +96,7 @@ FILE *FdCPU;        /*!< file handle for cpu.txt log-file. */
 /*Sink*/
 FILE *FdSink;        /*!< file handle for sink.txt log-file. */
 
-#ifdef XRAY_ION_HEAT
+#ifdef XRAY_BACKGROUND
 FILE *FdHeat;        /*!< file handle for heating.dat log-file. */
 #endif 
 
