@@ -306,7 +306,7 @@ void find_next_sync_point_and_drift(void)
   long long int min_glob, min;
   double timeold;
   double t0, t1;
-#ifdef XRAY_BACKGROUND
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
   int task_max;
 #endif
 #ifdef RAYTRACE_TG
@@ -495,7 +495,12 @@ void find_next_sync_point_and_drift(void)
 
 #ifdef XRAY_BACKGROUND
         initialize_heat_ion_rates();
+#endif
+#ifdef COSMIC_RAY_BACKGROUND
+        cosmic_ray_heat_ion_rates();
+#endif
 
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
         for(i=0; i<=6; i++)
           {
            COOLR.heat_ion[i] = All.heat_ion[i];
@@ -512,8 +517,6 @@ void find_next_sync_point_and_drift(void)
 	    fflush(stdout);
 	  }
 #endif
-
-
 
   while(min_glob >= All.Ti_nextoutput && All.Ti_nextoutput >= 0)
     {
@@ -747,13 +750,13 @@ void every_timestep_stuff(double dens_max)
 		 All.Time, z, All.TimeStep, log(All.Time) - log(All.Time - All.TimeStep));
 	  fflush(FdInfo);
 
-#ifdef XRAY_BACKGROUND
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
 		  z, dens_max, 
 		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
 		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
 	  fflush(FdHeat);
-#endif /* XRAY_BACKGROUND */
+#endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
 	}
       else
 	{
@@ -762,13 +765,13 @@ void every_timestep_stuff(double dens_max)
 	  printf("\nBegin Step %d, Time: %15.11g, Systemstep: %g\n", All.NumCurrentTiStep, All.Time, All.TimeStep);
 	  fflush(FdInfo);
 
-#ifdef XRAY_BACKGROUND
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
 		  All.Time, dens_max, 
 		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
 		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
 	  fflush(FdHeat);
-#endif /* XRAY_BACKGROUND */
+#endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
 	}
 
       fprintf(FdCPU, "Step %d, Time: %g, CPUs: %d\n", All.NumCurrentTiStep, All.Time, NTask);

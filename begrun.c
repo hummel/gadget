@@ -201,7 +201,7 @@ void begrun(void)
       strcpy(All.CpuFile, all.CpuFile);
       strcpy(All.TimingsFile, all.TimingsFile);
       strcpy(All.SnapshotFileBase, all.SnapshotFileBase);
-#ifdef XRAY_BACKGROUND
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
       strcpy(All.HeatFile, all.HeatFile);
 #endif
 
@@ -350,7 +350,7 @@ void open_outputfiles(void)
     }
 /*SINK*/
 
-#ifdef XRAY_BACKGROUND
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
   sprintf(buf, "%s%s", All.OutputDir, All.HeatFile);
   if(!(FdHeat = fopen(buf, mode)))
     {
@@ -387,7 +387,7 @@ void close_outputfiles(void)
   fclose(FdTimings);
 /*SINK*/
   fclose(FdSink);
-#ifdef XRAY_BACKGROUND
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
   fclose(FdHeat);
 #endif
 #ifdef FORCETEST
@@ -485,12 +485,15 @@ void read_parameter_file(char *fname)
       addr[nt] = All.RestartFile;
       id[nt++] = STRING;
 
-      /* X-ray background intensity */
-#ifdef XRAY_BACKGROUND
+      /* Ionizing Background */
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
       strcpy(tag[nt], "HeatFile");
       addr[nt] = All.HeatFile;
       id[nt++] = STRING;
+#endif
 
+      /* X-ray background intensity */
+#ifdef XRAY_BACKGROUND
       strcpy(tag[nt], "xrbIntensity");
       addr[nt] = &All.xrbIntensity;
       id[nt++] = DOUBLE;
@@ -502,6 +505,32 @@ void read_parameter_file(char *fname)
 
 #endif /* XRAY_VARIABLE_HEATING */
 #endif /* XRAY_BACKGROUND */
+
+      /* Cosmic ray background intensity */
+#ifdef COSMIC_RAY_BACKGROUND
+      strcpy(tag[nt], "crbIntensity");
+      addr[nt] = &All.crbIntensity;
+      id[nt++] = DOUBLE;
+
+      strcpy(tag[nt], "CRheatPerInteraction");
+      addr[nt] = &All.CR_heat;
+      id[nt++] = DOUBLE;
+
+      strcpy(tag[nt], "CRspectrum_min");
+      addr[nt] = &All.CR_spectrum_min;
+      id[nt++] = DOUBLE;
+
+      strcpy(tag[nt], "CRspectrum_max");
+      addr[nt] = &All.CR_spectrum_max;
+      id[nt++] = DOUBLE;
+
+#ifdef CR_VARIABLE_HEATING
+      strcpy(tag[nt], "crbFile");
+      addr[nt] = All.crbFile;
+      id[nt++] = STRING;
+
+#endif /* CR_VARIABLE_HEATING */
+#endif /* COSMIC_RAY_BACKGROUND */
 
 
       /*SINK*/
@@ -1113,6 +1142,14 @@ void read_parameter_file(char *fname)
 	errorFlag += read_xrbIntensity(All.xrbFile);
 #endif /* XRAY_VARIABLE_HEATING */
 #endif /* XRAY_BACKGROUND */
+
+#ifdef COSMIC_RAY_BACKGROUND
+      initialize_cosmic_ray_background();
+#ifdef CR_VARIABLE_HEATING
+      if(errorFlag == 0)
+	errorFlag += read_crbIntensity(All.crbFile);
+#endif /* CR_VARIABLE_HEATING */
+#endif /* COSMIC_RAY_BACKGROUND */
     }
 
   MPI_Bcast(&errorFlag, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -1250,7 +1287,7 @@ int read_outputlist(char *fname)
 #ifdef XRAY_VARIABLE_HEATING
 /*! this function reads a table containing the average X-ray background intensity
  *  as a function of redshift. Table must be sorted in descending redshift order,
- *  and may not contain more than MAXLEN_XRBLIST entries.
+ *  and may not contain more than MAXLEN_HEATLIST entries.
  */
 int read_xrbIntensity(char *fname)
 {
@@ -1270,7 +1307,7 @@ int read_xrbIntensity(char *fname)
       else
 	break;
     }
-  while(All.xrbLength < MAXLEN_XRBLIST);
+  while(All.xrbLength < MAXLEN_HEATLIST);
   fclose(fd);
 
   printf("\nfound %d redshift points in X-ray background intensity list.\n", All.xrbLength);
@@ -1279,6 +1316,40 @@ int read_xrbIntensity(char *fname)
 }
 #endif /* XRAY_VARIABLE_HEATING */
 #endif /* XRAY_BACKGROUND */
+
+#ifdef COSMIC_RAY_BACKGROUND
+#ifdef CR_VARIABLE_HEATING
+/*! this function reads a table containing the average Cosmic Ray background energy density
+ *  as a function of redshift. Table must be sorted in descending redshift order,
+ *  and may not contain more than MAXLEN_HEATLIST entries.
+ */
+int read_crbIntensity(char *fname)
+{
+  FILE *fd;
+
+  if(!(fd = fopen(fname, "r")))
+    {
+      printf("can't read cosmic ray background intensity list in file '%s'\n", fname);
+      return 1;
+    }
+
+  All.crbLength = 0;
+  do
+    {
+      if(fscanf(fd, "%lg %lg", &All.U_CRz[All.crbLength], &All.U_CR[All.crbLength]) == 2)
+	All.crbLength++;
+      else
+	break;
+    }
+  while(All.crbLength < MAXLEN_HEATLIST);
+  fclose(fd);
+
+  printf("\nfound %d redshift points in cosmic ray background intensity list.\n", All.crbLength);
+
+  return 0;
+}
+#endif /* CR_VARIABLE_HEATING */
+#endif /* COSMIC_RAY_BACKGROUND */
 
 
 /*! If a restart from restart-files is carried out where the TimeMax

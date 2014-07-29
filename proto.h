@@ -272,4 +272,10 @@ int    read_xrbIntensity(char *fname);
 #endif /* XRAY_VARIABLE_HEATING */
 #endif /* XRAY_BACKGROUND */
 
-
+#ifdef COSMIC_RAY_BACKGROUND
+void initialize_cosmic_ray_background(void);
+void cosmic_ray_heat_ion_rates(void);
+#ifdef CR_VARIABLE_HEATING
+int    read_crbIntensity(char *fname);
+#endif /* CR_VARIABLE_HEATING */
+#endif /* COSMIC_RAY_BACKGROUND */
