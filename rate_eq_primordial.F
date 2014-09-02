@@ -80,7 +80,7 @@ c
       parameter (G_n = GRAVITY)
 #endif
 
-#ifdef XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
       REAL gammaHeat_HI, gammaHeat_HeI
 #ifdef XRAY_SECONDARY_IONIZATION
       REAL eV_in_cgs
@@ -440,7 +440,7 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
 
 
-#ifdef XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
           ph38 =  ph38 + heat_ion(4)  !HI ion
           ph39 =  ph39 + heat_ion(5)  !HeI ion
           ph40 =  ph40 + heat_ion(6)  !HeII ion
