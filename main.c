@@ -79,12 +79,13 @@ int main(int argc, char **argv)
   t_start = -1.; /* Nothing in rate_eq depends on t_start, so it doesn't
 		    matter what value we give it */
   
-#ifdef JH_HEATING
+#ifdef XRAY_BACKGROUND
   initialize_heat_ion_rates();
   
   for(i=0; i<=6; i++)
     {
       COOLR.heat_ion[i] = All.heat_ion[i];
+      printf("COOLR heat_ion %d = %lg\n", i, COOLR.heat_ion[i]);
     }
 #endif
   
