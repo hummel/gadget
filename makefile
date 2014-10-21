@@ -103,8 +103,8 @@ OPT += -DSINKVAL
 # Select here the target architecture
 #============================================================================
 
-SYSTYPE="stampede"
-#SYSTYPE="r900"
+#SYSTYPE="stampede"
+SYSTYPE="r900"
 
 #============================================================================
 # Specific compilation flags
