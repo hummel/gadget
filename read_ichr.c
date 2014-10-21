@@ -3,7 +3,6 @@
 #include <string.h>
 #include <math.h>
 #include <string.h>
-#include <mpi.h>
 
 #include "allvars.h"
 #include "proto.h"
@@ -54,62 +53,11 @@ void read_ic(char *fname)
   All.TotNumPart = 0;
 
   num_files = find_files(fname);
-
-  rest_files = num_files;
-
   fill_Tab_IO_Labels();
 
-  while(rest_files > NTask)
-    {
-      sprintf(buf, "%s.%d", fname, ThisTask + (rest_files - NTask));
-      if(All.ICFormat == 3)
-	sprintf(buf, "%s.%d.hdf5", fname, ThisTask + (rest_files - NTask));
-
-      ngroups = NTask / All.NumFilesWrittenInParallel;
-      if((NTask % All.NumFilesWrittenInParallel))
-	ngroups++;
-      groupMaster = (ThisTask / ngroups) * ngroups;
-
-      for(gr = 0; gr < ngroups; gr++)
-	{
-	  if(ThisTask == (groupMaster + gr))	/* ok, it's this processor's turn */
-	    read_file(buf, ThisTask, ThisTask);
-	  MPI_Barrier(MPI_COMM_WORLD);
-	}
-
-      rest_files -= NTask;
-    }
-
-
-  if(rest_files > 0)
-    {
-      distribute_file(rest_files, 0, 0, NTask - 1, &filenr, &masterTask, &lastTask);
-
-      if(num_files > 1)
-	{
-	  sprintf(buf, "%s.%d", fname, filenr);
-	  if(All.ICFormat == 3)
-	    sprintf(buf, "%s.%d.hdf5", fname, filenr);
-	}
-      else
-	{
-	  sprintf(buf, "%s", fname);
-	  if(All.ICFormat == 3)
-	    sprintf(buf, "%s.hdf5", fname);
-	}
-
-      ngroups = rest_files / All.NumFilesWrittenInParallel;
-      if((rest_files % All.NumFilesWrittenInParallel))
-	ngroups++;
-
-      for(gr = 0; gr < ngroups; gr++)
-	{
-	  if((filenr / All.NumFilesWrittenInParallel) == gr)	/* ok, it's this processor's turn */
-	    read_file(buf, masterTask, lastTask);
-	  MPI_Barrier(MPI_COMM_WORLD);
-	}
-    }
-
+  sprintf(buf, "%s.hdf5", fname);
+  read_file(buf, ThisTask, ThisTask);
+  
 
   /* this makes sure that masses are initialized in the case that the mass-block
      is completely empty */
@@ -119,60 +67,11 @@ void read_ic(char *fname)
 	P[i].Mass = All.MassTable[P[i].Type];
     }
 
-  if(RestartFlag == 0)
-    {
-
-#ifdef SINKVAL
-     for(i = 0; i < N_gas; i++)
-       {
-       SphP[i].sink = 0;
-       }
-#endif
-
-#ifndef POLYTROPE
-      if(All.InitGasTemp > 0)
-	{
-	  u_init = (BOLTZMANN / PROTONMASS) * All.InitGasTemp;
-	  u_init *= All.UnitMass_in_g / All.UnitEnergy_in_cgs;	/* unit conversion */
-
-#ifdef ISOTHERM_EQS
-	  u_init *= 1.0;
-#else /* ISOTHERM_EQS */
-#ifdef CHEMCOOL
-          gamm1 = compute_initial_gamma() - 1.0;
-	  u_init *= (1.0 / gamm1);
-	  molecular_weight = compute_initial_molecular_weight();
-	  u_init /= molecular_weight;
-#else
-	  u_init *= (1.0 / GAMMA_MINUS1);
-
-	  if(All.InitGasTemp > 1.0e4)	/* assuming FULL ionization */
-	    molecular_weight = 4 / (8 - 5 * (1 - HYDROGEN_MASSFRAC));
-	  else			/* assuming NEUTRAL GAS */
-	    molecular_weight = 4 / (1 + 3 * HYDROGEN_MASSFRAC);
-
-	  u_init /= molecular_weight;
-#endif /* CHEMCOOL */
-#endif /* ISOTHERM_EQS */
-
-	  for(i = 0; i < N_gas; i++)
-	    {
-	      if(SphP[i].Entropy == 0)
-		SphP[i].Entropy = u_init;
-
-	      /* Note: the conversion to entropy will be done in the function init(),
-	         after the densities have been computed */
-	    }
-	}
-#endif /* !POLYTROPE */
-    }
 
 #ifndef POLYTROPE
   for(i = 0; i < N_gas; i++)
     SphP[i].Entropy = dmax(All.MinEgySpec, SphP[i].Entropy);
 #endif
-
-  MPI_Barrier(MPI_COMM_WORLD);
 
   if(ThisTask == 0)
     {
@@ -309,7 +208,6 @@ void read_file(char *fname, int readTask, int lastTask)
   int blockmaxlen;
   int i, n_in_file, n_for_this_task, ntask, pc, offset = 0, task;
   int blksize1, blksize2;
-  MPI_Status status;
   FILE *fd = 0;
   int nall;
   int type;
@@ -328,65 +226,56 @@ void read_file(char *fname, int readTask, int lastTask)
 #define SKIP  {my_fread(&blksize1,sizeof(int),1,fd);}
 #define SKIP2  {my_fread(&blksize2,sizeof(int),1,fd);}
 
-  if(ThisTask == readTask)
+  if(All.ICFormat == 1 || All.ICFormat == 2)
     {
-      if(All.ICFormat == 1 || All.ICFormat == 2)
+      if(!(fd = fopen(fname, "r")))
 	{
-	  if(!(fd = fopen(fname, "r")))
-	    {
-	      printf("can't open file `%s' for reading initial conditions.\n", fname);
-	      endrun(123);
-	    }
-
-	  if(All.ICFormat == 2)
-	    {
-	      SKIP;
-	      my_fread(&label, sizeof(char), 4, fd);
-	      my_fread(&nextblock, sizeof(int), 1, fd);
-	      printf("Reading header => '%c%c%c%c' (%d byte)\n", label[0], label[1], label[2], label[3],
-		     nextblock);
-	      SKIP2;
-	    }
-
+	  printf("can't open file `%s' for reading initial conditions.\n", fname);
+	  exit(123);
+	}
+      
+      if(All.ICFormat == 2)
+	{
 	  SKIP;
-	  my_fread(&header, sizeof(header), 1, fd);
+	  my_fread(&label, sizeof(char), 4, fd);
+	  my_fread(&nextblock, sizeof(int), 1, fd);
+	  printf("Reading header => '%c%c%c%c' (%d byte)\n", label[0], label[1], label[2], label[3],
+		 nextblock);
 	  SKIP2;
-/*
-	  if(blksize1 != 256 || blksize2 != 256)
-	    {
-	      printf("incorrect header format\n");
-	      fflush(stdout);
-	      endrun(890);
-	    }
-*/
 	}
-
-
-#ifdef HAVE_HDF5
-      if(All.ICFormat == 3)
+      
+      SKIP;
+      my_fread(&header, sizeof(header), 1, fd);
+      SKIP2;
+      /*
+	if(blksize1 != 256 || blksize2 != 256)
 	{
-	  read_header_attributes_in_hdf5(fname);
-
-	  hdf5_file = H5Fopen(fname, H5F_ACC_RDONLY, H5P_DEFAULT);
-
-	  for(type = 0; type < numtype; type++)
+	printf("incorrect header format\n");
+	fflush(stdout);
+	exit(890);
+	}
+      */
+    }
+  
+  
+#ifdef HAVE_HDF5
+  if(All.ICFormat == 3)
+    {
+      read_header_attributes_in_hdf5(fname);
+      
+      hdf5_file = H5Fopen(fname, H5F_ACC_RDONLY, H5P_DEFAULT);
+      
+      for(type = 0; type < numtype; type++)
+	{
+	  if(header.npart[type] > 0)
 	    {
-	      if(header.npart[type] > 0)
-		{
-		  sprintf(buf, "/PartType%d", type);
-		  hdf5_grp[type] = H5Gopen(hdf5_file, buf);
-		}
+	      sprintf(buf, "/PartType%d", type);
+	      hdf5_grp[type] = H5Gopen(hdf5_file, buf);
 	    }
 	}
-#endif
-
-      for(task = readTask + 1; task <= lastTask; task++)
-	MPI_Ssend(&header, sizeof(header), MPI_BYTE, task, TAG_HEADER, MPI_COMM_WORLD);
     }
-  else
-    MPI_Recv(&header, sizeof(header), MPI_BYTE, readTask, TAG_HEADER, MPI_COMM_WORLD, &status);
-
-
+#endif
+  
   if(All.TotNumPart == 0)
     {
       if(header.num_files <= 1)
@@ -399,7 +288,6 @@ void read_file(char *fname, int readTask, int lastTask)
       for(i = 0, All.TotNumPart = 0; i < numtype; i++)
 	{
 	  All.TotNumPart += header.npartTotal[i];
-          //printf("header.npartTotal[%d] = %d \n", i, header.npartTotal[i]);
 	  All.TotNumPart += (((long long) header.npartTotalHighWord[i]) << 32);
 	}
 
@@ -408,12 +296,11 @@ void read_file(char *fname, int readTask, int lastTask)
 	All.MassTable[i] = header.mass[i];
 
       All.MaxPart = All.PartAllocFactor * (All.TotNumPart / NTask);	/* sets the maximum number of particles that may */
-      All.MaxPartSph = All.PartAllocFactor * (All.TotN_gas / NTask);	/* sets the maximum number of particles that may 
-									   reside on a processor */
+      All.MaxPartSph = All.PartAllocFactor * (All.TotN_gas / NTask);	/* reside on a processor */
+									
       allocate_memory();
 
-      if(RestartFlag == 2)
-	All.Time = All.TimeBegin = header.time;
+      All.Time = All.TimeBegin = header.time;
     }
 
   if(ThisTask == readTask)
@@ -442,7 +329,6 @@ void read_file(char *fname, int readTask, int lastTask)
       fflush(stdout);
     }
 
-
   ntask = lastTask - readTask + 1;
 
 
@@ -460,25 +346,19 @@ void read_file(char *fname, int readTask, int lastTask)
 
       nall += n_for_this_task;
     }
-
   memmove(&P[N_gas + nall], &P[N_gas], (NumPart - N_gas) * sizeof(struct particle_data));
   nstart = N_gas;
-
-
 
   for(blocknr = 0; blocknr < IO_NBLOCKS; blocknr++)
     {
       if(blockpresent(blocknr))
 	{
-	  if(RestartFlag == 0 && blocknr > IO_MASS)
-	    continue;		/* ignore all other blocks in initial conditions */
 
 	  bytes_per_blockelement = get_bytes_per_blockelement(blocknr);
 
 	  blockmaxlen = ((int) (All.BufferSize * 1024 * 1024)) / bytes_per_blockelement;
 
 	  npart = get_particles_in_block(blocknr, &typelist[0]);
-
 	  if(npart > 0)
 	    {
 	      if(ThisTask == readTask)
@@ -500,10 +380,9 @@ void read_file(char *fname, int readTask, int lastTask)
 				 Tab_IO_Labels[blocknr][0], Tab_IO_Labels[blocknr][1],
 				 Tab_IO_Labels[blocknr][2], Tab_IO_Labels[blocknr][3]);
 			  fflush(stdout);
-			  endrun(1890);
+			  exit(1890);
 			}
 		    }
-
 		  if(All.ICFormat == 1 || All.ICFormat == 2)
 		    SKIP;
 		}
@@ -534,7 +413,7 @@ void read_file(char *fname, int readTask, int lastTask)
 			    if(NumPart + n_for_this_task > All.MaxPart)
 			      {
 				printf("too many particles\n");
-				endrun(1313);
+				exit(1313);
 			      }
 
 
@@ -554,7 +433,7 @@ void read_file(char *fname, int readTask, int lastTask)
 				    {
 				      get_dataset_name(blocknr, buf);
 				      hdf5_dataset = H5Dopen(hdf5_grp[type], buf);
-
+				      
 				      dims[0] = header.npart[type];
 				      dims[1] = get_values_per_blockelement(blocknr);
 				      if(dims[1] == 1)
@@ -601,14 +480,6 @@ void read_file(char *fname, int readTask, int lastTask)
 #endif
 				}
 
-			      if(ThisTask == readTask && task != readTask)
-				MPI_Ssend(CommBuffer, bytes_per_blockelement * pc, MPI_BYTE, task, TAG_PDATA,
-					  MPI_COMM_WORLD);
-
-			      if(ThisTask != readTask && task == ThisTask)
-				MPI_Recv(CommBuffer, bytes_per_blockelement * pc, MPI_BYTE, readTask,
-					 TAG_PDATA, MPI_COMM_WORLD, &status);
-
 			      if(ThisTask == task)
 				{
 				  empty_read_buffer(blocknr, nstart + offset, pc, type);
@@ -633,7 +504,7 @@ void read_file(char *fname, int readTask, int lastTask)
 			  printf("Task=%d   blocknr=%d  blksize1=%d  blksize2=%d\n", ThisTask, blocknr,
 				 blksize1, blksize2);
 			  fflush(stdout);
-			  endrun(1889);
+			  exit(1889);
 			}
 		    }
 		}
@@ -701,7 +572,7 @@ int find_files(char *fname)
     {
       if(ThisTask == 0)
 	printf("Code wasn't compiled with HDF5 support enabled!\n");
-      endrun(0);
+      exit(0);
     }
 #endif
 
@@ -734,8 +605,6 @@ int find_files(char *fname)
 	}
     }
 
-  MPI_Bcast(&header, sizeof(header), MPI_BYTE, 0, MPI_COMM_WORLD);
-
   if(header.num_files > 0)
     return header.num_files;
 
@@ -767,8 +636,6 @@ int find_files(char *fname)
 	}
     }
 
-  MPI_Bcast(&header, sizeof(header), MPI_BYTE, 0, MPI_COMM_WORLD);
-
   if(header.num_files > 0)
     return header.num_files;
 
@@ -779,7 +646,7 @@ int find_files(char *fname)
       fflush(stdout);
     }
 
-  endrun(0);
+  exit(0);
   return 0;
 }
 

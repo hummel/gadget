@@ -86,9 +86,9 @@ OPT   += -DCHEMISTRYNETWORK=1
 #--------------------------------------- Sink Particles
 OPT += -DSINKVAL
 #--------------------------------------- X-ray Ionizing Background
-#OPT += -DXRAY_BACKGROUND
-#OPT += -DXRAY_VARIABLE_HEATING
-#OPT += -DXRAY_SECONDARY_IONIZATION
+OPT += -DXRAY_BACKGROUND
+OPT += -DXRAY_VARIABLE_HEATING
+OPT += -DXRAY_SECONDARY_IONIZATION
 #--------------------------------------- Cosmic Ray Ionizing Background
 #OPT += -DCOSMIC_RAY_BACKGROUND
 #OPT += -DCR_VARIABLE_HEATING
@@ -104,15 +104,17 @@ OPT += -DSINKVAL
 #============================================================================
 
 #SYSTYPE="stampede"
+#SYSTYPE="lonestar"
 SYSTYPE="r900"
+#SYSTYPE="cauthon"
 
 #============================================================================
 # Specific compilation flags
 #============================================================================
 
 ifeq ($(SYSTYPE),"stampede")
-CC = mpicc -c
-FC = mpif90 -nofor-main
+CC = gcc -fopenmp
+FC = gfortran -fopenmp
 OPTIMIZE = -O3 -g #-Wall
 
 GSL_INCL = -I${TACC_GSL_INC} -I${TACC_GSL_INC}/gsl
@@ -122,15 +124,15 @@ FFTW_INCL = -I$(TACC_FFTW2_INC)
 FFTW_LIBS = -L$(TACC_FFTW2_LIB)
 #FFTW_LIBS = -L${TACC_FFTW2_LIB} -lfftw
 
-MPICHLIB = -lmpich
+MPICHLIB = 
 
 HDF5INCL = -I$(TACC_HDF5_INC)
 HDF5LIB = -L$(TACC_HDF5_LIB) -lhdf5
 endif
 
 ifeq ($(SYSTYPE),"r900")
-CC        = /home/r900-1/pawlik/sw/mpich2/bin/mpicc
-FC        = /home/r900-1/pawlik/sw/mpich2/bin/mpif90 -nofor-main
+CC        = gcc -fopenmp
+FC        = gfortran -fopenmp
 #OPTIMIZE  = -Wall -g -O3
 OPTIMIZE  = -Wall -g3 
 
@@ -140,54 +142,42 @@ GSL_LIBS  = -L/home/r900-1/pawlik/sw/gsl/lib -lgsl -lgslcblas -lm #-lfrtbegin -l
 FFTW_INCL = -I/home/r900-1/pawlik/sw/fftw2mpich2/include
 FFTW_LIBS = -L/home/r900-1/pawlik/sw/fftw2mpich2/lib -lsrfftw_mpi -lsfftw_mpi -lsrfftw -lsfftw 
 
-MPICHINCL = -I/home/r900-1/pawlik/sw/mpich2/include 
-MPICHLIB  = -L/home/r900-1/pawlik/sw/mpich2/lib -lmpich
+MPICHINCL = 
+MPICHLIB  = 
 
 HDF5INCL  = -I/home/r900-1/pawlik/sw/hdf5/include
 HDF5LIB   = -L/home/r900-1/pawlik/sw/hdf5/lib -lhdf5
 endif
 
+ifeq ($(SYSTYPE),"cauthon")
+CC        = cc 
+FC        = gfortran
+#OPTIMIZE  = -Wall -g -O3
+OPTIMIZE  = -Wall -g3
+
+GSL_LIBS  = -lgsl -lgslcblas -lm 
+FFTW_LIBS = -lsrfftw_mpi -lsfftw_mpi -lsrfftw -lsfftw 
+MPICHLIB  =
+HDF5LIB   = -lhdf5
+endif
+
+ifneq (HAVE_HDF5,$(findstring HAVE_HDF5,$(OPT))) 
+HDF5INCL =
+HDF5LIB  =
+endif
 
 OPTIONS = $(OPTIMIZE) $(OPT)
 
-EXEC   = GADGET2
+EXEC   = cooltime
 
-COBJS =	accel.o \
-		accrete.o \
-		allocate.o \
+COBJS =	main.o \
+		allocate.o\
 		allvars.o \
 		begrun.o \
 		chemcool.o \
-		density.o  \
-		domain.o \
-		driftfac.o  \
-		endrun.o \
-		forcetree.o \
-		global.o  \
-		gravtree.o \
-		gravtree_forcetest.o \
-                heat_ion_rates.o \
-		hydra.o \
-		init.o \
-		iohr.o    \
-		longrange.o \
-		main.o \
-		ngb.o  \
-		peano.o \
-		pm_nonperiodic.o \
-		pm_periodic.o \
-		potential.o  \
-		predict.o \
-		ray.o \
-		raytrace.o \
-		read_ichr.o \
-		restart.o \
-		rsk_turbdriving_field.o \
-		rsk_turbdriving_NGP.o \
-		run.o \
-                sink.o \
-		system.o \
-		timestep.o
+		heat_ion_rates.o \
+		iohr.o \
+		read_ichr.o
 
 FOBJS =	calc_photo.o \
 		cheminmo.o \

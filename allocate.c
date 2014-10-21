@@ -38,7 +38,7 @@ void allocate_commbuffers(void)
   if(!(CommBuffer = malloc(bytes = All.BufferSize * 1024 * 1024)))
     {
       printf("failed to allocate memory for `CommBuffer' (%g MB).\n", bytes / (1024.0 * 1024.0));
-      endrun(2);
+      exit(2);
     }
 
   All.BunchSizeForce =
@@ -118,7 +118,7 @@ void allocate_memory(void)
       if(!(P = malloc(bytes = All.MaxPart * sizeof(struct particle_data))))
 	{
 	  printf("failed to allocate memory for `P' (%g MB).\n", bytes / (1024.0 * 1024.0));
-	  endrun(1);
+	  exit(1);
 	}
       bytes_tot += bytes;
 
@@ -133,7 +133,7 @@ void allocate_memory(void)
       if(!(SphP = malloc(bytes = All.MaxPartSph * sizeof(struct sph_particle_data))))
 	{
 	  printf("failed to allocate memory for `SphP' (%g MB) %d.\n", bytes / (1024.0 * 1024.0), sizeof(struct sph_particle_data));
-	  endrun(1);
+	  exit(1);
 	}
       bytes_tot += bytes;
 
