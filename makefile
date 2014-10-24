@@ -86,7 +86,7 @@ OPT   += -DCHEMISTRYNETWORK=1
 #--------------------------------------- Sink Particles
 OPT += -DSINKVAL
 #--------------------------------------- X-ray Ionizing Background
-OPT += -DXRAY_BACKGROUND
+OPT += -DXRAY_BACKGROUND=2
 OPT += -DXRAY_VARIABLE_HEATING
 OPT += -DXRAY_SECONDARY_IONIZATION
 #--------------------------------------- Cosmic Ray Ionizing Background

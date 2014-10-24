@@ -93,6 +93,147 @@ void cosmic_ray_heat_ion_rates(void)
 #endif /* COSMIC_RAY_BACKGROUND */
 
 #ifdef XRAY_BACKGROUND
+#if XRAY_BACKGROUND == 2
+void initialize_xray_background(void)
+{
+  calculate_xray_cross_section(0);
+  calculate_xray_cross_section(1);
+  calculate_xray_cross_section(2);
+  if(ThisTask==0)
+    {
+      printf("\nX-Ray Cross-Sections:\n");
+      printf("Hydrogen:\n    sigma(%lg eV)=%lg cm2  sigma(%lg eV)=%lg cm2\n",
+	     All.XR_spectrum_min, All.XR_H_cross_section[0], 
+	     All.XR_spectrum_max, All.XR_H_cross_section[N_INTEGRATION_STEPS-1]);
+    } 
+}
+
+void calculate_xray_flux(void)
+{
+  int i;
+  double N_i_steps;
+  double z, J0;
+  double nu_min, nu_max, nu_0;
+  double logvmin, logvmax, Freq;
+  J0 = All.xrbIntensity;
+
+#ifdef XRAY_VARIABLE_HEATING
+  /* Variable background ramping up from high z */
+  z = 1.0 / (All.Time) - 1;
+  i = 0;
+  do
+    {
+      J0 = All.Jxr[i];
+      i++;
+    }
+  while(All.Jz[i] > z);
+  J0 = J0 * All.xrbIntensity;
+#endif /* XRAY_VARIABLE_HEATING */
+
+
+  // Energy integration limits in eV
+  double E_min = All.XR_spectrum_min; //1.0e3;
+  double E_max = All.XR_spectrum_max; //10.0e3;
+  // Energy Spectrum Parameters
+  double alpha = All.XR_spectrum_index;
+  double E_0 = All.XR_E0; //1.0e3;
+
+  nu_0 = E_0 / h_eV;
+  nu_min = E_min / h_eV;
+  nu_max = E_max / h_eV;
+  logvmin = log10(nu_min);
+  logvmax = log10(nu_max);
+  N_i_steps = (double)(N_INTEGRATION_STEPS);
+  for(i = 0; i < N_INTEGRATION_STEPS; i++)
+    {
+      Freq = (logvmax - logvmin) / N_i_steps * (i + 0.5) + logvmin;
+      Freq = pow(10, Freq);
+      All.XR_flux[i] = 4 * pi * J0 * pow( Freq/nu_0, alpha);
+    }
+  
+  if(ThisTask==0)
+    {
+      printf("\nz: %lg  J0: %lg\n", z, J0);
+      printf("Flux(%lg eV): %lg    Flux(%lg eV): %lg \n",
+	     E_min, All.XR_flux[0], E_max, All.XR_flux[N_INTEGRATION_STEPS-1]);
+    } 
+}
+
+void calculate_xray_cross_section(int rad_type)
+{
+  int i = 0;
+  double A_0 = 6.3e-18;
+  double nu_min, nu_max, nu_ion;
+  double N_i_steps;
+  double Z, logvmin, logvmax, epsilon;
+  double Freq, Freq_start, Freq_end, DFreq;
+  double sigma;
+
+  // Energy integration limits in eV
+  double E_min = All.XR_spectrum_min; //1.0e3;
+  double E_max = All.XR_spectrum_max; //10.0e3;
+  // Atomic Number
+  double Z_HI = 1.0;
+  double Z_HeI = 0.89;
+  double Z_HeII = 2.0;
+  // Ionization Thresholds in Hz
+  double nu_ion_HI = 3.29e15;
+  double nu_ion_HeI = 5.95e15;
+  double nu_ion_HeII = 1.32e16;
+  
+  
+  if(rad_type == 0)
+    {
+      Z = Z_HI;
+      nu_ion = nu_ion_HI;
+    }
+  if(rad_type == 1)
+    {
+      Z = Z_HeI;
+      nu_ion = nu_ion_HeI;
+    }
+  if(rad_type == 2)
+    {
+      Z = Z_HeII;
+      nu_ion = nu_ion_HeII;
+    }
+  nu_min = E_min / h_eV;
+  nu_max = E_max / h_eV;
+  logvmin = log10(nu_min);
+  logvmax = log10(nu_max);
+
+  N_i_steps = (double)(N_INTEGRATION_STEPS);
+  for(i = 0; i < N_INTEGRATION_STEPS; i++)
+    {
+      Freq = (logvmax - logvmin) / N_i_steps * (i + 0.5) + logvmin;
+      Freq_start = (logvmax - logvmin) / N_i_steps * (i) + logvmin;
+      Freq_end   = (logvmax - logvmin) / N_i_steps * (i + 1.0) + logvmin;
+      Freq       = pow(10, Freq);
+      Freq_start = pow(10, Freq_start);
+      Freq_end   = pow(10, Freq_end);
+      DFreq      = Freq_end - Freq_start;
+      
+      epsilon = sqrt(Freq / nu_ion - 1.0);
+      sigma = A_0 / pow(Z,2.0) * pow(nu_ion/Freq,4.0) 
+	* exp(4.0 - (4.0*atan(epsilon) / epsilon)) / (1.0-exp(-2.0*PI / epsilon));
+
+      if(rad_type == 0)
+	{
+	  All.XR_H_cross_section[i] = sigma; // Hydrogen cross-section
+	}
+      if(rad_type == 1)
+	{
+	  All.XR_HeI_cross_section[i] = sigma; // HeI cross-section
+	}
+      if(rad_type == 2)
+	{
+	  All.XR_HeII_cross_section[i] = sigma; // HeII cross-section
+	}
+    }
+}
+#endif /* XRAY_BACKGROUND = 2 */
+
+#if XRAY_BACKGROUND == 1
 void initialize_heat_ion_rates()
 {
   int i;
@@ -208,8 +349,8 @@ void calculate_heat_ion_rates(int rad_type, double J_0)
       All.heat_ion[2] = heat_rate; // HeII heat
     }
 }
+#endif /* XRAY_BACKGROUND = 1*/
 #endif /* XRAY_BACKGROUND */
-
 #ifdef RAYTRACE_TG
 double heat_ion_rates(int rad_type, double L3, double T3)
   {

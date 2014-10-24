@@ -72,23 +72,38 @@ int main(int argc, char **argv)
   chemcool_init();
   
   sprintf(buf, "%s/snapshot_%03d", All.InitCondFile, snapshot);
-  read_ic(buf);
-  //N_gas = load_data();
+  //read_ic(buf);
+  N_gas = load_data();
   printf("processing...\n");
   nsp = NSPEC;
   t_start = -1.; /* Nothing in rate_eq depends on t_start, so it doesn't
 		    matter what value we give it */
   
-#ifdef XRAY_BACKGROUND
+#ifdef XRAY_BACKGROUND 
+#if XRAY_BACKGROUND == 1
   initialize_heat_ion_rates();
-  
-  for(i=0; i<=6; i++)
+  for(i=0; i<7; i++)
     {
       COOLR.heat_ion[i] = All.heat_ion[i];
-      printf("COOLR heat_ion %d = %lg\n", i, COOLR.heat_ion[i]);
     }
 #endif
-  
+
+#if XRAY_BACKGROUND == 2
+  initialize_xray_background();
+  calculate_xray_flux();
+  COOLR.XR_spectrum_min = All.XR_spectrum_min;
+  COOLR.XR_spectrum_max = All.XR_spectrum_max;
+  for(i=0; i<N_INTEGRATION_STEPS; i++)
+    {
+      COOLR.XR_flux[i] = All.XR_flux[i];
+      COOLR.XR_H_cross_section[i] = All.XR_H_cross_section[i];
+      COOLR.XR_HeI_cross_section[i] = All.XR_HeI_cross_section[i];
+      COOLR.XR_HeII_cross_section[i] = All.XR_HeII_cross_section[i];
+    }
+#endif
+#endif  
+
+
   sprintf(buf, "%s%s_%04d.dat", All.OutputDir, All.SnapshotFileBase, snapshot);
   CoolTime=fopen(buf,"w");
   sprintf(buf, "%sheattime_%04d.dat", All.OutputDir, snapshot);

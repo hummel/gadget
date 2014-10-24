@@ -280,6 +280,14 @@ c
 #ifdef RAYTRACE_TG
       integer ray_flag_sun
 #endif
+#if XRAY_BACKGROUND == 2
+#define N_INTEGRATION_STEPS 100
+      REAL XR_spectrum_min, XR_spectrum_max
+      REAL XR_flux(N_INTEGRATION_STEPS)
+      REAL XR_H_cross_section(N_INTEGRATION_STEPS)
+      REAL XR_HeI_cross_section(N_INTEGRATION_STEPS)
+      REAL XR_HeII_cross_section(N_INTEGRATION_STEPS)
+#endif /* XRAY_BACKGROUND == 2 */
       REAL heat_ion(7)
 
       common /coolr/ temptab, cltab, chtab, dtcltab, dtchtab, 
@@ -295,6 +303,11 @@ c
 #ifdef RAYTRACE_TG
      $,              ray_H_coeff, ray_He_coeff, ray_LW_coeff, ray_NH2
 #endif
+#if XRAY_BACKGROUND == 2
+     $,              XR_spectrum_min, XR_spectrum_max,
+     $               XR_flux, XR_H_cross_section, XR_HeI_cross_section, 
+     $               XR_HeII_cross_section
+#endif /* XRAY_BACKGROUND == 2 */
      $,              heat_ion
 
       common /cooli/ iphoto, iflag_mn, iflag_ad, iflag_atom

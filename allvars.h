@@ -589,6 +589,17 @@ extern struct global_data_all_processes
    /* X-ray background intensity */
 #ifdef XRAY_BACKGROUND
   double xrbIntensity;
+#if XRAY_BACKGROUND == 2
+#define N_INTEGRATION_STEPS 100
+  double XR_E0;
+  double XR_spectrum_index;
+  double XR_spectrum_min;
+  double XR_spectrum_max;
+  double XR_flux[N_INTEGRATION_STEPS];
+  double XR_H_cross_section[N_INTEGRATION_STEPS];
+  double XR_HeI_cross_section[N_INTEGRATION_STEPS];
+  double XR_HeII_cross_section[N_INTEGRATION_STEPS];
+#endif /* XRAY_BACKGROUND == 2 */
 #ifdef XRAY_VARIABLE_HEATING
   double Jz[MAXLEN_HEATLIST], Jxr[MAXLEN_HEATLIST];
   int xrbLength;
@@ -1206,6 +1217,16 @@ extern struct{
   double ray_NH2;
 #endif
   double heat_ion[7];
+#ifdef XRAY_BACKGROUND
+#if XRAY_BACKGROUND == 2
+  double XR_spectrum_min;
+  double XR_spectrum_max;
+  double XR_flux[N_INTEGRATION_STEPS];
+  double XR_H_cross_section[N_INTEGRATION_STEPS];
+  double XR_HeI_cross_section[N_INTEGRATION_STEPS];
+  double XR_HeII_cross_section[N_INTEGRATION_STEPS];
+#endif /* XRAY_BACKGROUND == 2 */
+#endif /* XRAY_BACKGROUND */
 }COOLR;
 
 extern struct{

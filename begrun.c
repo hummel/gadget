@@ -185,6 +185,24 @@ void read_parameter_file(char *fname)
       addr[nt] = &All.xrbIntensity;
       id[nt++] = DOUBLE;
 
+#if XRAY_BACKGROUND == 2
+      strcpy(tag[nt], "XR_E0");
+      addr[nt] = &All.XR_E0;
+      id[nt++] = DOUBLE;
+
+      strcpy(tag[nt], "XRspectrum_index");
+      addr[nt] = &All.XR_spectrum_index;
+      id[nt++] = DOUBLE;
+
+      strcpy(tag[nt], "XRspectrum_min");
+      addr[nt] = &All.XR_spectrum_min;
+      id[nt++] = DOUBLE;
+
+      strcpy(tag[nt], "XRspectrum_max");
+      addr[nt] = &All.XR_spectrum_max;
+      id[nt++] = DOUBLE;
+#endif /* XRAY_BACKGROUND == 2 */
+
 #ifdef XRAY_VARIABLE_HEATING
       strcpy(tag[nt], "xrbFile");
       addr[nt] = All.xrbFile;

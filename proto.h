@@ -265,8 +265,15 @@ void ghost(void);
 #endif
 
 #ifdef XRAY_BACKGROUND
+#if XRAY_BACKGROUND == 1
 void initialize_heat_ion_rates(void);
 void calculate_heat_ion_rates(int rad_type, double J_0);
+#endif /* XRAY_BACKGROUND == 1 */
+#if XRAY_BACKGROUND == 2
+void initialize_xray_background(void);
+void calculate_xray_flux(void);
+void calculate_xray_cross_section(int rad_type);
+#endif /* XRAY_BACKGROUND == 2 */
 #ifdef XRAY_VARIABLE_HEATING
 int    read_xrbIntensity(char *fname);
 #endif /* XRAY_VARIABLE_HEATING */
