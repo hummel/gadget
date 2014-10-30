@@ -82,10 +82,11 @@ c
 
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
       REAL gammaHeat_HI, gammaHeat_HeI
-#if XRAY_BACKGROUND == 2
-#define h_eV 4.13567d-15
-      REAL nu_min, nu_max, nu_ion, logvmin, logvmax
-      REAL Freq, Freq_start, Freq_end, DFreq
+c#if XRAY_BACKGROUND == 2
+c#define h_eV 4.13567d-15
+c      REAL nu_min, nu_max, nu_ion, logvmin, logvmax
+c      REAL Freq, Freq_start, Freq_end, DFreq
+c#endif
 #ifdef XRAY_SECONDARY_IONIZATION
       REAL eV_in_cgs
       REAL ionfrac, fH_ion, fHe_ion, fH_heat, fHe_heat
@@ -445,22 +446,22 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
 
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
-#if XRAY_BACKGROUND == 2
-      nu_min = XR_spectrum_min / h_eV
-      nu_max = XR_spectrum_max / h_eV
-      logvmin = DLOG10(nu_min)
-      logvmax = DLOG10(nu_max)
-      do I = 1, N_INTEGRATION_STEPS
-         Freq = (logvmax - logvmin) / N_steps * (i + 0.5) + logvmin
-         Freq_start = (logvmax - logvmin) / N_steps * (i) + logvmin
-         Freq_end = (logvmax - logvmin) / N_steps * (i + 1.0) + logvmin
-         Freq       = 10**Freq
-         Freq_start = 10**Freq_start
-         Freq_end   = 10**Freq_end
-         DFreq      = Freq_end - Freq_start
-         print*, 'Integration Step', I
-      enddo
-#endif 
+c#if XRAY_BACKGROUND == 2
+c      nu_min = XR_spectrum_min / h_eV
+c      nu_max = XR_spectrum_max / h_eV
+c      logvmin = DLOG10(nu_min)
+c      logvmax = DLOG10(nu_max)
+c      do I = 1, N_INTEGRATION_STEPS
+c         Freq = (logvmax - logvmin) / N_steps * (i + 0.5) + logvmin
+c         Freq_start = (logvmax - logvmin) / N_steps * (i) + logvmin
+c         Freq_end = (logvmax - logvmin) / N_steps * (i + 1.0) + logvmin
+c         Freq       = 10**Freq
+c         Freq_start = 10**Freq_start
+c         Freq_end   = 10**Freq_end
+c         DFreq      = Freq_end - Freq_start
+c         print*, 'Integration Step', I
+c      enddo
+c#endif 
           ph38 =  ph38 + heat_ion(4)  !HI ion
           ph39 =  ph39 + heat_ion(5)  !HeI ion
           ph40 =  ph40 + heat_ion(6)  !HeII ion
