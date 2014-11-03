@@ -93,7 +93,7 @@ void cosmic_ray_heat_ion_rates(void)
 #endif /* COSMIC_RAY_BACKGROUND */
 
 #ifdef XRAY_BACKGROUND
-void initialize_heat_ion_rates()
+void xray_heat_ion_rates()
 {
   int i;
   double z, J0;
@@ -112,9 +112,12 @@ void initialize_heat_ion_rates()
   J0 = J0 * All.xrbIntensity;
 #endif /* XRAY_VARIABLE_HEATING */
 
-  calculate_heat_ion_rates(0, J0);
-  calculate_heat_ion_rates(1, J0);
-  calculate_heat_ion_rates(2, J0);
+  All.heat_ion[0] = J0 * All.XR_heat_ion_base[0]; // HI heat
+  All.heat_ion[1] = J0 * All.XR_heat_ion_base[1]; // HeI heat
+  All.heat_ion[2] = J0 * All.XR_heat_ion_base[2]; // HeII heat
+  All.heat_ion[3] = J0 * All.XR_heat_ion_base[3]; // HI ion
+  All.heat_ion[4] = J0 * All.XR_heat_ion_base[4]; // HeI ion
+  All.heat_ion[5] = J0 * All.XR_heat_ion_base[5]; // HeII ion
   All.heat_ion[6] = 0.0; // No LW Background!
   
   if(ThisTask==0)
@@ -127,7 +130,7 @@ void initialize_heat_ion_rates()
     } 
 }
 
-void calculate_heat_ion_rates(int rad_type, double J_0)
+void initialize_xray_background(int rad_type)
 {
   int i = 0;
   int N_i_steps = 100;
@@ -185,7 +188,7 @@ void calculate_heat_ion_rates(int rad_type, double J_0)
       Freq_end   = pow(10, Freq_end);
       DFreq      = Freq_end - Freq_start;
       
-      F_nu = 4 * pi * J_0 * pow( Freq/nu_0, -1.5);
+      F_nu = 4 * pi * pow( Freq/nu_0, -1.5);
       epsilon = sqrt(Freq / nu_ion - 1.0);
       sigma = A_0 / pow(Z,2.0) * pow(nu_ion/Freq,4.0) 
 	* exp(4.0 - (4.0*atan(epsilon) / epsilon)) / (1.0-exp(-2.0*PI / epsilon));
@@ -194,18 +197,18 @@ void calculate_heat_ion_rates(int rad_type, double J_0)
     }
   if(rad_type == 0)
     {
-      All.heat_ion[3] = ion_rate; // HI ion
-      All.heat_ion[0] = heat_rate; // HI heat
+      All.XR_heat_ion_base[3] = ion_rate; // HI ion
+      All.XR_heat_ion_base[0] = heat_rate; // HI heat
     }
   if(rad_type == 1)
     {
-      All.heat_ion[4] = ion_rate; // HeI ion
-      All.heat_ion[1] = heat_rate; // HeI heat
+      All.XR_heat_ion_base[4] = ion_rate; // HeI ion
+      All.XR_heat_ion_base[1] = heat_rate; // HeI heat
     }
   if(rad_type == 2)
     {
-      All.heat_ion[5] = ion_rate; // HeII ion
-      All.heat_ion[2] = heat_rate; // HeII heat
+      All.XR_heat_ion_base[5] = ion_rate; // HeII ion
+      All.XR_heat_ion_base[2] = heat_rate; // HeII heat
     }
 }
 #endif /* XRAY_BACKGROUND */
