@@ -72,15 +72,18 @@ int main(int argc, char **argv)
   chemcool_init();
   
   sprintf(buf, "%s/snapshot_%03d", All.InitCondFile, snapshot);
-  read_ic(buf);
-  //N_gas = load_data();
+  //read_ic(buf);
+  N_gas = load_data();
   printf("processing...\n");
   nsp = NSPEC;
   t_start = -1.; /* Nothing in rate_eq depends on t_start, so it doesn't
 		    matter what value we give it */
   
 #ifdef XRAY_BACKGROUND
-  initialize_heat_ion_rates();
+  initialize_xray_background(0);
+  initialize_xray_background(1);
+  initialize_xray_background(2);
+  xray_heat_ion_rates();
   
   for(i=0; i<=6; i++)
     {

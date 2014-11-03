@@ -824,6 +824,9 @@ void read_parameter_file(char *fname)
 	All.OutputListLength = 0;
 
 #ifdef XRAY_BACKGROUND
+      initialize_xray_background(0);
+      initialize_xray_background(1);
+      initialize_xray_background(2);
 #ifdef XRAY_VARIABLE_HEATING
       if(errorFlag == 0)
 	errorFlag += read_xrbIntensity(All.xrbFile);
