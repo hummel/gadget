@@ -589,6 +589,7 @@ extern struct global_data_all_processes
    /* X-ray background intensity */
 #ifdef XRAY_BACKGROUND
   double xrbIntensity;
+  double XR_heat_ion_base[6];
 #ifdef XRAY_VARIABLE_HEATING
   double Jz[MAXLEN_HEATLIST], Jxr[MAXLEN_HEATLIST];
   int xrbLength;
