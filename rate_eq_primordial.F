@@ -442,50 +442,44 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #ifdef KH_RATE_TABLE
-      do I = 1, 3
-          print*, I, khn(I), krH(I), krHe(I), krHep(I)
-      enddo
-
+      print*, yntot, khn(I), krH(I), krHe(I), krHep(I)
 #endif
-          ph38 =  ph38 + heat_ion(4)  !HI ion
-          ph39 =  ph39 + heat_ion(5)  !HeI ion
-          ph40 =  ph40 + heat_ion(6)  !HeII ion
-          ph42 =  ph42 + heat_ion(1)  !HI heat
-          ph43 =  ph43 + heat_ion(2)  !HeI heat
-          ph44 =  ph44 + heat_ion(3)  !HeII heat
-          gammaHeat_HI = ph42
-          gammaHeat_HeI = ph43
+      ph38 =  ph38 + heat_ion(4) ! HI ion
+      ph39 =  ph39 + heat_ion(5) ! HeI ion
+      ph40 =  ph40 + heat_ion(6) ! HeII ion
+      ph42 =  ph42 + heat_ion(1) ! HI heat
+      ph43 =  ph43 + heat_ion(2) ! HeI heat
+      ph44 =  ph44 + heat_ion(3) ! HeII heat
+      gammaHeat_HI = ph42
+      gammaHeat_HeI = ph43
 #endif
 
 #ifdef XRAY_SECONDARY_IONIZATION
-          eV_in_cgs = 1.60217646e-12
-          if(abhp .gt. 0.0) then
-             ionfrac = abhp
-          else
-             ionfrac = 0.0
-          endif
+      eV_in_cgs = 1.60217646e-12
+      if(abhp .gt. 0.0) then
+         ionfrac = abhp
+      else
+         ionfrac = 0.0
+      endif
 
 #if XRAY_SECONDARY_IONIZATION == 1
-          ! Shull & Van Steenberg (1985)
-          fH_ion = 0.3908 * (1.0 - ionfrac**(0.4092))**(1.7592)
-          fHe_ion = 0.0554 * (1.0 - ionfrac**(0.4614))**(1.6660)
+!     Shull & Van Steenberg (1985)
+      fH_ion = 0.3908 * (1.0 - ionfrac**(0.4092))**(1.7592)
+      fHe_ion = 0.0554 * (1.0 - ionfrac**(0.4614))**(1.6660)
 
-          fH_heat = 0.9971 * (1.0 - (1.0-ionfrac**(0.2263))**(1.3163))
-          fHe_heat = fH_heat
+      fH_heat = 0.9971 * (1.0 - (1.0-ionfrac**(0.2263))**(1.3163))
+      fHe_heat = fH_heat
 #endif
-          gammaBol_HI_sec = (abHI*gammaHeat_HI + abHeI*gammaHeat_HeI)
-     $                     * fH_ion / (13.6 * eV_in_cgs);
+      gammaBol_HI_sec = (abHI*gammaHeat_HI + abHeI*gammaHeat_HeI)
+     $     * fH_ion / (13.6 * eV_in_cgs);
 
-          gammaBol_HeI_sec = (abHeI*gammaHeat_HeI + abHI*gammaHeat_HI)
-     $                      * fHe_ion / (24.6 * eV_in_cgs);
+      gammaBol_HeI_sec = (abHeI*gammaHeat_HeI + abHI*gammaHeat_HI)
+     $     * fHe_ion / (24.6 * eV_in_cgs);
 
-
-          ph42  = ph42 + gammaHeat_HI * fH_heat       ! HI heat
-          ph43  = ph43 + gammaHeat_HeI * fHe_heat    ! HeI heat
-
+      ph42  = ph42 + gammaHeat_HI * fH_heat ! HI heat
+      ph43  = ph43 + gammaHeat_HeI * fHe_heat ! HeI heat
 #endif
 #endif
-
 
       cr1  = crtab(1)  ! HI
       cr1a = crtab(1)  ! DI, assumed same as HI
