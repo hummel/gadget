@@ -551,6 +551,9 @@ extern struct global_data_all_processes
 
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
   char HeatFile[MAXLEN_FILENAME];               /*!< name of file with heating info */
+#ifdef KH_RATE_TABLE
+  char khRateFile[MAXLEN_FILENAME];               /*!< name of file with heating/ionization rate info */
+#endif /* KH_RATE_TABLE */
 #ifdef XRAY_VARIABLE_HEATING
   char xrbFile[MAXLEN_FILENAME];               /*!< name of file with Xray background intensity info */
 #endif /* XRAY_VARIABLE_HEATING */
@@ -584,6 +587,11 @@ extern struct global_data_all_processes
 
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #define MAXLEN_HEATLIST      5000   /*!< maxmimum number of entries in background radiation file */
+#ifdef KH_RATE_TABLE
+#define KH_RATE_LEN 100
+  double khn[KH_RATE_LEN], krateH[KH_RATE_LEN], krateHe[KH_RATE_LEN], krateHeII[KH_RATE_LEN];
+  double hrateH[KH_RATE_LEN], hrateHe[KH_RATE_LEN], hrateHeII[KH_RATE_LEN];
+#endif /* KH_RATE_TABLE */
 #endif
 
    /* X-ray background intensity */

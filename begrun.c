@@ -490,6 +490,11 @@ void read_parameter_file(char *fname)
       strcpy(tag[nt], "HeatFile");
       addr[nt] = All.HeatFile;
       id[nt++] = STRING;
+#ifdef KH_RATE_TABLE
+      strcpy(tag[nt], "khRateFile");
+      addr[nt] = All.khRateFile;
+      id[nt++] = STRING;
+#endif
 #endif
 
       /* X-ray background intensity */
@@ -1150,6 +1155,11 @@ void read_parameter_file(char *fname)
 	errorFlag += read_crbIntensity(All.crbFile);
 #endif /* CR_VARIABLE_HEATING */
 #endif /* COSMIC_RAY_BACKGROUND */
+
+#ifdef KH_RATE_TABLE
+      if(errorFlag == 0)
+	errorFlag += read_kh_rate_table(All.khRateFile);
+#endif
     }
 
   MPI_Bcast(&errorFlag, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -1283,7 +1293,7 @@ int read_outputlist(char *fname)
   return 0;
 }
 
-#ifdef XRAY_BACKGROUND
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #ifdef XRAY_VARIABLE_HEATING
 /*! this function reads a table containing the average X-ray background intensity
  *  as a function of redshift. Table must be sorted in descending redshift order,
@@ -1315,9 +1325,7 @@ int read_xrbIntensity(char *fname)
   return 0;
 }
 #endif /* XRAY_VARIABLE_HEATING */
-#endif /* XRAY_BACKGROUND */
 
-#ifdef COSMIC_RAY_BACKGROUND
 #ifdef CR_VARIABLE_HEATING
 /*! this function reads a table containing the average Cosmic Ray background energy density
  *  as a function of redshift. Table must be sorted in descending redshift order,
@@ -1349,8 +1357,40 @@ int read_crbIntensity(char *fname)
   return 0;
 }
 #endif /* CR_VARIABLE_HEATING */
-#endif /* COSMIC_RAY_BACKGROUND */
 
+#ifdef KH_RATE_TABLE
+/*! this function reads a table containing the average X-ray background intensity
+ *  as a function of redshift. Table must be sorted in descending redshift order,
+ *  and may not contain more than MAXLEN_HEATLIST entries.
+ */
+int read_kh_rate_table(char *fname)
+{
+  FILE *fd;
+  int khlen;
+
+  if(!(fd = fopen(fname, "r")))
+    {
+      printf("can't read heating/ionization rate table in file '%s'\n", fname);
+      return 1;
+    }
+
+  khlen = 0;
+  do
+    {
+      if(fscanf(fd, "%lg %lg %lg %lg %lg %lg %lg", &All.khn[khlen], &All.krateH[khlen], &All.krateHe[khlen], &All.krateHeII[khlen], &All.hrateH[khlen], &All.hrateHe[khlen], &All.hrateHeII[khlen]) == 7)
+	khlen++;
+      else
+	break;
+    }
+  while(khlen < 100);
+  fclose(fd);
+
+  printf("\nfound %d redshift points in X-ray background intensity list.\n", khlen);
+
+  return 0;
+}
+#endif /* KH_RATE_TABLE */
+#endif /* XRAY_VARIABLE_HEATING || COSMIC_RAY_BACKGROUND */
 
 /*! If a restart from restart-files is carried out where the TimeMax
  *  variable is increased, then the integer timeline needs to be
