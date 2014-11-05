@@ -1366,7 +1366,7 @@ int read_crbIntensity(char *fname)
 int read_kh_rate_table(char *fname)
 {
   FILE *fd;
-  int khlen;
+  int khlen, i;
 
   if(!(fd = fopen(fname, "r")))
     {
@@ -1377,7 +1377,9 @@ int read_kh_rate_table(char *fname)
   khlen = 0;
   do
     {
-      if(fscanf(fd, "%lg %lg %lg %lg %lg %lg %lg", &All.khn[khlen], &All.krateH[khlen], &All.krateHe[khlen], &All.krateHeII[khlen], &All.hrateH[khlen], &All.hrateHe[khlen], &All.hrateHeII[khlen]) == 7)
+      if(fscanf(fd, "%lg %lg %lg %lg %lg %lg %lg", &All.khn[khlen],
+		&All.krH[khlen], &All.krHe[khlen], &All.krHep[khlen],
+		&All.hrH[khlen], &All.hrHe[khlen], &All.hrHep[khlen]) == 7)
 	khlen++;
       else
 	break;

@@ -441,6 +441,12 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
 
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef KH_RATE_TABLE
+      do I = 1, 3
+          print*, I, khn(I), krH(I), krHe(I), krHep(I)
+      enddo
+
+#endif
           ph38 =  ph38 + heat_ion(4)  !HI ion
           ph39 =  ph39 + heat_ion(5)  !HeI ion
           ph40 =  ph40 + heat_ion(6)  !HeII ion
@@ -449,6 +455,7 @@ c     ray_coeff_min is mininmum heating distance in physical pc
           ph44 =  ph44 + heat_ion(3)  !HeII heat
           gammaHeat_HI = ph42
           gammaHeat_HeI = ph43
+#endif
 
 #ifdef XRAY_SECONDARY_IONIZATION
           eV_in_cgs = 1.60217646e-12

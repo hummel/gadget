@@ -281,6 +281,18 @@ c
       integer ray_flag_sun
 #endif
       REAL heat_ion(7)
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef KH_RATE_TABLE
+#define KH_RATE_LEN 82
+      REAL khn(KH_RATE_LEN)
+      REAL krH(KH_RATE_LEN)
+      REAL krHe(KH_RATE_LEN)
+      REAL krHep(KH_RATE_LEN)
+      REAL hrH(KH_RATE_LEN)
+      REAL hrHe(KH_RATE_LEN)
+      REAL hrHep(KH_RATE_LEN)
+#endif /* KH_RATE_TABLE */
+#endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
 
       common /coolr/ temptab, cltab, chtab, dtcltab, dtchtab, 
      $               crtab, crphot, 
@@ -296,6 +308,9 @@ c
      $,              ray_H_coeff, ray_He_coeff, ray_LW_coeff, ray_NH2
 #endif
      $,              heat_ion
+#ifdef KH_RATE_TABLE
+     $,              khn, krH, krHe, krHep, hrH, hrHe, hrHep
+#endif
 
       common /cooli/ iphoto, iflag_mn, iflag_ad, iflag_atom
      $,              iflag_3bh2a, iflag_3bh2b, iflag_h3pra
