@@ -79,18 +79,42 @@ int main(int argc, char **argv)
   t_start = -1.; /* Nothing in rate_eq depends on t_start, so it doesn't
 		    matter what value we give it */
   
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef KH_RATE_TABLE
+  for(i=0; i<KH_RATE_LEN; i++)
+    {
+      COOLR.khn[i] = All.khn[i];
+      COOLR.krH[i] = All.krH[i];
+      COOLR.krHe[i] = All.krHe[i];
+      COOLR.krHep[i] = All.krHep[i];
+      COOLR.hrH[i] = All.hrH[i];
+      COOLR.hrHe[i] = All.hrHe[i];
+      COOLR.hrHep[i] = All.hrHep[i];
+      if (i == 0)
+	printf("COOLR.khn[%d]=%lg All.khn[%d]=%lg COOLR.krH[%d]=%lg\n",
+	       i, COOLR.khn[i], i, All.khn[i], i, COOLR.krH[i]);
+    }
+  printf("COOLR.khn[%d]=%lg All.khn[%d]=%lg COOLR.krH[%d]=%lg\n",
+	 i-1, COOLR.khn[i-1], i-1, All.khn[i-1], i-1, COOLR.krH[i-1]);
+#else
 #ifdef XRAY_BACKGROUND
   initialize_xray_background(0);
   initialize_xray_background(1);
   initialize_xray_background(2);
   xray_heat_ion_rates();
+#endif /* XRAY_BACKGROUND */
+#ifdef COSMIC_RAY_BACKGROUND
+  initialize_cosmic_ray_background();
+  cosmic_ray_heat_ion_rates();
+#endif /* COSMIC_RAY_BACKGROUND */
   
   for(i=0; i<=6; i++)
     {
       COOLR.heat_ion[i] = All.heat_ion[i];
       printf("COOLR heat_ion %d = %lg\n", i, COOLR.heat_ion[i]);
     }
-#endif
+#endif /* else */
+#endif /* defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND) */
   
   sprintf(buf, "%s%s_%04d.dat", All.OutputDir, All.SnapshotFileBase, snapshot);
   CoolTime=fopen(buf,"w");

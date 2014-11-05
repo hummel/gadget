@@ -588,9 +588,9 @@ extern struct global_data_all_processes
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #define MAXLEN_HEATLIST      5000   /*!< maxmimum number of entries in background radiation file */
 #ifdef KH_RATE_TABLE
-#define KH_RATE_LEN 100
-  double khn[KH_RATE_LEN], krateH[KH_RATE_LEN], krateHe[KH_RATE_LEN], krateHeII[KH_RATE_LEN];
-  double hrateH[KH_RATE_LEN], hrateHe[KH_RATE_LEN], hrateHeII[KH_RATE_LEN];
+#define KH_RATE_LEN 82
+  double khn[KH_RATE_LEN], krH[KH_RATE_LEN], krHe[KH_RATE_LEN], krHep[KH_RATE_LEN];
+  double hrH[KH_RATE_LEN], hrHe[KH_RATE_LEN], hrHep[KH_RATE_LEN];
 #endif /* KH_RATE_TABLE */
 #endif
 
@@ -1215,6 +1215,12 @@ extern struct{
   double ray_NH2;
 #endif
   double heat_ion[7];
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef KH_RATE_TABLE
+  double khn[KH_RATE_LEN], krH[KH_RATE_LEN], krHe[KH_RATE_LEN], krHep[KH_RATE_LEN];
+  double hrH[KH_RATE_LEN], hrHe[KH_RATE_LEN], hrHep[KH_RATE_LEN];
+#endif /* KH_RATE_TABLE */
+#endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
 }COOLR;
 
 extern struct{
