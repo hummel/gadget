@@ -82,6 +82,10 @@ c
 
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
       REAL gammaHeat_HI, gammaHeat_HeI
+#ifdef KH_RATE_TABLE
+      INTEGER ix
+      REAL wx, logn
+#endif
 #ifdef XRAY_SECONDARY_IONIZATION
       REAL eV_in_cgs
       REAL ionfrac, fH_ion, fHe_ion, fH_heat, fHe_heat
@@ -438,11 +442,18 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
 #endif
 
-
-
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #ifdef KH_RATE_TABLE
-      print*, yntot, khn(I), krH(I), krHe(I), krHep(I)
+      logn = LOG10(yntot)
+c      ix = FLOOR((logn - khn(1))/khrange * KH_RATE_LEN)+1
+      ix = MAX(1, MIN(KH_RATE_LEN-1, MAXLOC(khn, 1, khn.le.logn)))
+      wx = (logn - khn(ix))/(khn(ix+1) - khn(ix))
+      heat_ion(4) = wx*(krH(ix+1) - krH(ix)) + krH(ix)
+      heat_ion(5) = wx*(krHe(ix+1) - krHe(ix)) + krHe(ix)
+      heat_ion(6) = wx*(krHep(ix+1) - krHep(ix)) + krHep(ix)
+      heat_ion(1) = wx*(hrH(ix+1) - hrH(ix)) + hrH(ix)
+      heat_ion(2) = wx*(hrHe(ix+1) - hrHe(ix)) + hrHe(ix)
+      heat_ion(3) = wx*(hrHep(ix+1) - hrHep(ix)) + hrHep(ix)
 #endif
       ph38 =  ph38 + heat_ion(4) ! HI ion
       ph39 =  ph39 + heat_ion(5) ! HeI ion
