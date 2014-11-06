@@ -492,9 +492,8 @@ void find_next_sync_point_and_drift(void)
     }
 #endif
 
-
 #ifdef XRAY_BACKGROUND
-        initialize_heat_ion_rates();
+        xray_heat_ion_rates();
 #endif
 #ifdef COSMIC_RAY_BACKGROUND
         cosmic_ray_heat_ion_rates();
@@ -516,7 +515,7 @@ void find_next_sync_point_and_drift(void)
 	      }
 	    fflush(stdout);
 	  }
-#endif
+#endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
 
   while(min_glob >= All.Ti_nextoutput && All.Ti_nextoutput >= 0)
     {
