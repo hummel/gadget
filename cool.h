@@ -284,7 +284,6 @@ c
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #ifdef KH_RATE_TABLE
 #define KH_RATE_LEN 82
-      REAL khrange
       REAL khn(KH_RATE_LEN)
       REAL krH(KH_RATE_LEN)
       REAL krHe(KH_RATE_LEN)
@@ -310,7 +309,6 @@ c
 #endif
      $,              heat_ion
 #ifdef KH_RATE_TABLE
-     $,              khrange
      $,              khn, krH, krHe, krHep, hrH, hrHe, hrHep
 #endif
 
