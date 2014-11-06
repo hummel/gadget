@@ -1217,6 +1217,7 @@ extern struct{
   double heat_ion[7];
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #ifdef KH_RATE_TABLE
+  double khrange;
   double khn[KH_RATE_LEN], krH[KH_RATE_LEN], krHe[KH_RATE_LEN], krHep[KH_RATE_LEN];
   double hrH[KH_RATE_LEN], hrHe[KH_RATE_LEN], hrHep[KH_RATE_LEN];
 #endif /* KH_RATE_TABLE */

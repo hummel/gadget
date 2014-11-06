@@ -81,6 +81,8 @@ int main(int argc, char **argv)
   
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #ifdef KH_RATE_TABLE
+  COOLR.khrange = All.khn[KH_RATE_LEN-1] - All.khn[0];
+  printf("kh_rate Range: %lg\n", COOLR.khrange);
   for(i=0; i<KH_RATE_LEN; i++)
     {
       COOLR.khn[i] = All.khn[i];
