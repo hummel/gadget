@@ -463,7 +463,6 @@ c      ix = FLOOR((logn - khn(1))/khrange * KH_RATE_LEN)+1
       ph44 =  ph44 + heat_ion(3) ! HeII heat
       gammaHeat_HI = ph42
       gammaHeat_HeI = ph43
-#endif
 
 #ifdef XRAY_SECONDARY_IONIZATION
       eV_in_cgs = 1.60217646e-12
