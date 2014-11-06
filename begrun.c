@@ -116,6 +116,54 @@ void begrun(void)
   COOLI.iflag_fixed_ion = 0;
 #endif
 
+#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef KH_RATE_TABLE
+  for(i=0; i<KH_RATE_LEN; i++)
+    {
+      COOLR.khn[i] = All.khn[i];
+      COOLR.krH[i] = All.krH[i];
+      COOLR.krHe[i] = All.krHe[i];
+      COOLR.krHep[i] = All.krHep[i];
+      COOLR.hrH[i] = All.hrH[i];
+      COOLR.hrHe[i] = All.hrHe[i];
+      COOLR.hrHep[i] = All.hrHep[i];
+    }
+  if(ThisTask == 0)
+    {
+      printf("COOLR.khn[%d]=%lg All.khn[%d]=%lg COOLR.krH[%d]=%lg\n",
+	     0, COOLR.khn[0], 0, All.khn[0], 0, COOLR.krH[0]);
+      printf("COOLR.khn[%d]=%lg All.khn[%d]=%lg COOLR.krH[%d]=%lg\n",
+	     i-1, COOLR.khn[i-1], i-1, All.khn[i-1], i-1, COOLR.krH[i-1]);
+      fflush(stdout);
+    }
+  MPI_Bcast(&COOLR.khn, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.krH, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.krHe, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.krHep, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.hrH, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.hrHe, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.hrHep, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&All.khn, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&All.krH, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&All.krHe, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&All.krHep, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&All.hrH, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&All.hrHe, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&All.hrHep, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+
+#else
+#ifdef XRAY_BACKGROUND
+  initialize_xray_background(0);
+  initialize_xray_background(1);
+  initialize_xray_background(2);
+#endif /* XRAY_BACKGROUND */
+#ifdef COSMIC_RAY_BACKGROUND
+  initialize_cosmic_ray_background();
+#endif /* COSMIC_RAY_BACKGROUND */
+#endif /* else */
+#endif /* defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND) */
+
+
   chemcool_init();
 #endif /* CHEMCOOL */
 
@@ -1149,7 +1197,6 @@ void read_parameter_file(char *fname)
 #endif /* XRAY_BACKGROUND */
 
 #ifdef COSMIC_RAY_BACKGROUND
-      initialize_cosmic_ray_background();
 #ifdef CR_VARIABLE_HEATING
       if(errorFlag == 0)
 	errorFlag += read_crbIntensity(All.crbFile);
