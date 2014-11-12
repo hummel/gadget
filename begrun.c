@@ -116,7 +116,6 @@ void begrun(void)
   COOLI.iflag_fixed_ion = 0;
 #endif
 
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #ifdef KH_RATE_TABLE
   for(i=0; i<KH_RATE_LEN; i++)
     {
@@ -150,18 +149,7 @@ void begrun(void)
   MPI_Bcast(&All.hrH, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
   MPI_Bcast(&All.hrHe, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
   MPI_Bcast(&All.hrHep, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-
-#else
-#ifdef XRAY_BACKGROUND
-  initialize_xray_background(0);
-  initialize_xray_background(1);
-  initialize_xray_background(2);
-#endif /* XRAY_BACKGROUND */
-#ifdef COSMIC_RAY_BACKGROUND
-  initialize_cosmic_ray_background();
-#endif /* COSMIC_RAY_BACKGROUND */
-#endif /* else */
-#endif /* defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND) */
+#endif /* KH_RATE_TABLE */
 
 
   chemcool_init();
@@ -1190,6 +1178,9 @@ void read_parameter_file(char *fname)
 	All.OutputListLength = 0;
 
 #ifdef XRAY_BACKGROUND
+      initialize_xray_background(0);
+      initialize_xray_background(1);
+      initialize_xray_background(2);
 #ifdef XRAY_VARIABLE_HEATING
       if(errorFlag == 0)
 	errorFlag += read_xrbIntensity(All.xrbFile);
@@ -1197,6 +1188,7 @@ void read_parameter_file(char *fname)
 #endif /* XRAY_BACKGROUND */
 
 #ifdef COSMIC_RAY_BACKGROUND
+      initialize_cosmic_ray_background();
 #ifdef CR_VARIABLE_HEATING
       if(errorFlag == 0)
 	errorFlag += read_crbIntensity(All.crbFile);
