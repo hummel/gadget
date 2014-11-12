@@ -284,6 +284,7 @@ c
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #ifdef KH_RATE_TABLE
 #define KH_RATE_LEN 82
+      REAL znorm
       REAL khn(KH_RATE_LEN)
       REAL krH(KH_RATE_LEN)
       REAL krHe(KH_RATE_LEN)
@@ -309,7 +310,7 @@ c
 #endif
      $,              heat_ion
 #ifdef KH_RATE_TABLE
-     $,              khn, krH, krHe, krHep, hrH, hrHe, hrHep
+     $,              znorm, khn, krH, krHe, krHep, hrH, hrHe, hrHep
 #endif
 
       common /cooli/ iphoto, iflag_mn, iflag_ad, iflag_atom

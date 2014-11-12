@@ -446,8 +446,11 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 #ifdef KH_RATE_TABLE
       logn = LOG10(yntot)
 c      ix = FLOOR((logn - khn(1))/khrange * KH_RATE_LEN)+1
+c     table lookup
       ix = MAX(1, MIN(KH_RATE_LEN-1, MAXLOC(khn, 1, khn.le.logn)))
-      wx = (logn - khn(ix))/(khn(ix+1) - khn(ix))
+c     interpolate table position and multiply by
+c     redshift-dependent normalization factor
+      wx = znorm * (logn - khn(ix))/(khn(ix+1) - khn(ix))
       heat_ion(4) = wx*(krH(ix+1) - krH(ix)) + krH(ix)
       heat_ion(5) = wx*(krHe(ix+1) - krHe(ix)) + krHe(ix)
       heat_ion(6) = wx*(krHep(ix+1) - krHep(ix)) + krHep(ix)

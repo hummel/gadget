@@ -112,6 +112,9 @@ void xray_heat_ion_rates()
   J0 = J0 * All.xrbIntensity;
 #endif /* XRAY_VARIABLE_HEATING */
 
+#ifdef KH_RATE_TABLE
+  COOLR.znorm = J0;
+#else
   All.heat_ion[0] = J0 * All.XR_heat_ion_base[0]; // HI heat
   All.heat_ion[1] = J0 * All.XR_heat_ion_base[1]; // HeI heat
   All.heat_ion[2] = J0 * All.XR_heat_ion_base[2]; // HeII heat
@@ -119,7 +122,8 @@ void xray_heat_ion_rates()
   All.heat_ion[4] = J0 * All.XR_heat_ion_base[4]; // HeI ion
   All.heat_ion[5] = J0 * All.XR_heat_ion_base[5]; // HeII ion
   All.heat_ion[6] = 0.0; // No LW Background!
-  
+#endif
+
   if(ThisTask==0)
     {
       printf("\nz: %lg  J0: %lg\n", z, J0);
