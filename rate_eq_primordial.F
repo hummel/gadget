@@ -472,14 +472,12 @@ c      ix = FLOOR((logn - khn(1))/khrange * KH_RATE_LEN)+1
          ionfrac = 0.0
       endif
 
-#if XRAY_SECONDARY_IONIZATION == 1
 !     Shull & Van Steenberg (1985)
       fH_ion = 0.3908 * (1.0 - ionfrac**(0.4092))**(1.7592)
       fHe_ion = 0.0554 * (1.0 - ionfrac**(0.4614))**(1.6660)
 
       fH_heat = 0.9971 * (1.0 - (1.0-ionfrac**(0.2263))**(1.3163))
       fHe_heat = fH_heat
-#endif
       gammaBol_HI_sec = (abHI*gammaHeat_HI + abHeI*gammaHeat_HeI)
      $     * fH_ion / (13.6 * eV_in_cgs);
 
