@@ -31,7 +31,10 @@ void begrun(void)
 #ifdef TURBULENCE
    double tstart, tend;
    int bytes;
-#endif 
+#endif
+#ifdef KH_RATE_TABLE
+   int i;
+#endif
 
   struct global_data_all_processes all;
 
@@ -135,13 +138,13 @@ void begrun(void)
 	     i-1, COOLR.khn[i-1], i-1, All.khn[i-1], i-1, COOLR.krH[i-1]);
       fflush(stdout);
     }
-  MPI_Bcast(&COOLR.khn, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&COOLR.krH, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&COOLR.krHe, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&COOLR.krHep, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&COOLR.hrH, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&COOLR.hrHe, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&COOLR.hrHep, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.khn, KH_RATE_LEN, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.krH, KH_RATE_LEN, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.krHe, KH_RATE_LEN, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.krHep, KH_RATE_LEN, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.hrH, KH_RATE_LEN, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.hrHe, KH_RATE_LEN, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&COOLR.hrHep, KH_RATE_LEN, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 #endif /* KH_RATE_TABLE */
 
 
@@ -1398,7 +1401,7 @@ int read_crbIntensity(char *fname)
 int read_kh_rate_table(char *fname)
 {
   FILE *fd;
-  int khlen, i;
+  int khlen;
 
   if(!(fd = fopen(fname, "r")))
     {
