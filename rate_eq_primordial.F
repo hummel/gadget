@@ -448,15 +448,21 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 c      ix = FLOOR((logn - khn(1))/khrange * KH_RATE_LEN)+1
 c     table lookup
       ix = MAX(1, MIN(KH_RATE_LEN-1, MAXLOC(khn, 1, khn.le.logn)))
-c     interpolate table position and multiply by
-c     redshift-dependent normalization factor
-      wx = znorm * (logn - khn(ix))/(khn(ix+1) - khn(ix))
+c     interpolate table position
+      wx = (logn - khn(ix))/(khn(ix+1) - khn(ix))
       heat_ion(4) = wx*(krH(ix+1) - krH(ix)) + krH(ix)
       heat_ion(5) = wx*(krHe(ix+1) - krHe(ix)) + krHe(ix)
       heat_ion(6) = wx*(krHep(ix+1) - krHep(ix)) + krHep(ix)
       heat_ion(1) = wx*(hrH(ix+1) - hrH(ix)) + hrH(ix)
       heat_ion(2) = wx*(hrHe(ix+1) - hrHe(ix)) + hrHe(ix)
       heat_ion(3) = wx*(hrHep(ix+1) - hrHep(ix)) + hrHep(ix)
+c     Multiply by redshift-dependent normalization factor
+      heat_ion(1) = heat_ion(1) * znorm
+      heat_ion(2) = heat_ion(2) * znorm
+      heat_ion(3) = heat_ion(3) * znorm
+      heat_ion(4) = heat_ion(4) * znorm
+      heat_ion(5) = heat_ion(5) * znorm
+      heat_ion(6) = heat_ion(6) * znorm
 #endif
       ph38 =  ph38 + heat_ion(4) ! HI ion
       ph39 =  ph39 + heat_ion(5) ! HeI ion
