@@ -500,6 +500,7 @@ void find_next_sync_point_and_drift(void)
 #endif
 
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifndef KH_RATE_TABLE
         for(i=0; i<=6; i++)
           {
            COOLR.heat_ion[i] = All.heat_ion[i];
@@ -515,6 +516,7 @@ void find_next_sync_point_and_drift(void)
 	      }
 	    fflush(stdout);
 	  }
+#endif /* KH_RATE_TABLE */
 #endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
 
   while(min_glob >= All.Ti_nextoutput && All.Ti_nextoutput >= 0)
