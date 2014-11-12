@@ -142,13 +142,6 @@ void begrun(void)
   MPI_Bcast(&COOLR.hrH, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
   MPI_Bcast(&COOLR.hrHe, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
   MPI_Bcast(&COOLR.hrHep, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&All.khn, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&All.krH, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&All.krHe, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&All.krHep, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&All.hrH, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&All.hrHe, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-  MPI_Bcast(&All.hrHep, KH_RATE_LEN, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
 #endif /* KH_RATE_TABLE */
 
 
