@@ -279,3 +279,7 @@ void cosmic_ray_heat_ion_rates(void);
 int    read_crbIntensity(char *fname);
 #endif /* CR_VARIABLE_HEATING */
 #endif /* COSMIC_RAY_BACKGROUND */
+
+#ifdef KH_RATE_TABLE
+int read_kh_rate_table(char *fname);
+#endif
