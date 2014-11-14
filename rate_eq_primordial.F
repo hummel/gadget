@@ -444,7 +444,7 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
 #if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
 #ifdef KH_RATE_TABLE
-      logn = LOG10(yntot)
+      logn = LOG10(yn)
 c      ix = FLOOR((logn - khn(1))/khrange * KH_RATE_LEN)+1
 c     table lookup
       ix = MAX(1, MIN(KH_RATE_LEN-1, MAXLOC(khn, 1, khn.le.logn)))
