@@ -74,6 +74,9 @@ void cosmic_ray_heat_ion_rates(void)
   ion_rate = ucr * All.CR_base_integral;
   heat_rate = ion_rate * All.CR_heat;
 
+#ifdef KH_RATE_TABLE
+  COOLR.znorm = ucr;
+#else
   All.heat_ion[0] = heat_rate; // HI heat
   All.heat_ion[1] = 0.0;
   All.heat_ion[2] = 0.0;
@@ -89,6 +92,7 @@ void cosmic_ray_heat_ion_rates(void)
       printf("Heating Rates:\n   HI = %lg \n   HeI = %lg \n   HeII = %lg \n",
 	     All.heat_ion[0], All.heat_ion[1], All.heat_ion[2]);
     } 
+#endif
 }
 #endif /* COSMIC_RAY_BACKGROUND */
 
@@ -122,8 +126,6 @@ void xray_heat_ion_rates()
   All.heat_ion[4] = J0 * All.XR_heat_ion_base[4]; // HeI ion
   All.heat_ion[5] = J0 * All.XR_heat_ion_base[5]; // HeII ion
   All.heat_ion[6] = 0.0; // No LW Background!
-#endif
-
   if(ThisTask==0)
     {
       printf("\nz: %lg  J0: %lg\n", z, J0);
@@ -132,6 +134,7 @@ void xray_heat_ion_rates()
       printf("Heating Rates:\n   HI = %lg \n   HeI = %lg \n   HeII = %lg \n",
 	     All.heat_ion[0], All.heat_ion[1], All.heat_ion[2]);
     } 
+#endif
 }
 
 void initialize_xray_background(int rad_type)
