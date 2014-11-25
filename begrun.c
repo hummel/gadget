@@ -233,7 +233,7 @@ void begrun(void)
       strcpy(All.CpuFile, all.CpuFile);
       strcpy(All.TimingsFile, all.TimingsFile);
       strcpy(All.SnapshotFileBase, all.SnapshotFileBase);
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
       strcpy(All.HeatFile, all.HeatFile);
 #endif
 
@@ -382,7 +382,7 @@ void open_outputfiles(void)
     }
 /*SINK*/
 
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#if defined(IONIZING_BACKGROUND)
   sprintf(buf, "%s%s", All.OutputDir, All.HeatFile);
   if(!(FdHeat = fopen(buf, mode)))
     {
@@ -419,7 +419,7 @@ void close_outputfiles(void)
   fclose(FdTimings);
 /*SINK*/
   fclose(FdSink);
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#if defined(IONIZING_BACKGROUND)
   fclose(FdHeat);
 #endif
 #ifdef FORCETEST
@@ -518,37 +518,29 @@ void read_parameter_file(char *fname)
       id[nt++] = STRING;
 
       /* Ionizing Background */
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#if defined(IONIZING_BACKGROUND)
       strcpy(tag[nt], "HeatFile");
       addr[nt] = All.HeatFile;
       id[nt++] = STRING;
+
+      strcpy(tag[nt], "bkgIntensity");
+      addr[nt] = &All.bkgIntensity;
+      id[nt++] = DOUBLE;
+
 #ifdef KH_RATE_TABLE
       strcpy(tag[nt], "khRateFile");
       addr[nt] = All.khRateFile;
       id[nt++] = STRING;
-#endif
-#endif
+#endif /* KH_RATE_TABLE */
 
-      /* X-ray background intensity */
-#ifdef XRAY_BACKGROUND
-      strcpy(tag[nt], "xrbIntensity");
-      addr[nt] = &All.xrbIntensity;
-      id[nt++] = DOUBLE;
-
-#ifdef XRAY_VARIABLE_HEATING
-      strcpy(tag[nt], "xrbFile");
-      addr[nt] = All.xrbFile;
+#ifdef VARIABLE_HEATING
+      strcpy(tag[nt], "bkgFile");
+      addr[nt] = All.bkgFile;
       id[nt++] = STRING;
+#endif /* VARIABLE_HEATING */
 
-#endif /* XRAY_VARIABLE_HEATING */
-#endif /* XRAY_BACKGROUND */
-
-      /* Cosmic ray background intensity */
-#ifdef COSMIC_RAY_BACKGROUND
-      strcpy(tag[nt], "crbIntensity");
-      addr[nt] = &All.crbIntensity;
-      id[nt++] = DOUBLE;
-
+      /* Cosmic ray background parameters */
+#if IONIZING_BACKGROUND == 2
       strcpy(tag[nt], "CRheatPerInteraction");
       addr[nt] = &All.CR_heat;
       id[nt++] = DOUBLE;
@@ -560,14 +552,8 @@ void read_parameter_file(char *fname)
       strcpy(tag[nt], "CRspectrum_max");
       addr[nt] = &All.CR_spectrum_max;
       id[nt++] = DOUBLE;
-
-#ifdef CR_VARIABLE_HEATING
-      strcpy(tag[nt], "crbFile");
-      addr[nt] = All.crbFile;
-      id[nt++] = STRING;
-
-#endif /* CR_VARIABLE_HEATING */
-#endif /* COSMIC_RAY_BACKGROUND */
+#endif /* IONIZING_BACKGROUND == 2*/
+#endif /* IONIZING_BACKGROUND */
 
 
       /*SINK*/
@@ -1173,23 +1159,19 @@ void read_parameter_file(char *fname)
       else
 	All.OutputListLength = 0;
 
-#ifdef XRAY_BACKGROUND
+#if IONIZING_BACKGROUND == 1
       initialize_xray_background(0);
       initialize_xray_background(1);
       initialize_xray_background(2);
-#ifdef XRAY_VARIABLE_HEATING
-      if(errorFlag == 0)
-	errorFlag += read_xrbIntensity(All.xrbFile);
-#endif /* XRAY_VARIABLE_HEATING */
-#endif /* XRAY_BACKGROUND */
-
-#ifdef COSMIC_RAY_BACKGROUND
+#endif
+#if IONIZING_BACKGROUND == 2
       initialize_cosmic_ray_background();
-#ifdef CR_VARIABLE_HEATING
+#endif
+
+#ifdef VARIABLE_HEATING
       if(errorFlag == 0)
-	errorFlag += read_crbIntensity(All.crbFile);
-#endif /* CR_VARIABLE_HEATING */
-#endif /* COSMIC_RAY_BACKGROUND */
+	errorFlag += read_bkgIntensity(All.bkgFile);
+#endif /* VARIABLE_HEATING */
 
 #ifdef KH_RATE_TABLE
       if(errorFlag == 0)
@@ -1328,13 +1310,12 @@ int read_outputlist(char *fname)
   return 0;
 }
 
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
-#ifdef XRAY_VARIABLE_HEATING
+#ifdef VARIABLE_HEATING
 /*! this function reads a table containing the average X-ray background intensity
  *  as a function of redshift. Table must be sorted in descending redshift order,
  *  and may not contain more than MAXLEN_HEATLIST entries.
  */
-int read_xrbIntensity(char *fname)
+int read_bkgIntensity(char *fname)
 {
   FILE *fd;
 
@@ -1344,54 +1325,22 @@ int read_xrbIntensity(char *fname)
       return 1;
     }
 
-  All.xrbLength = 0;
+  All.bkgLength = 0;
   do
     {
-      if(fscanf(fd, "%lg %lg", &All.Jz[All.xrbLength], &All.Jxr[All.xrbLength]) == 2)
-	All.xrbLength++;
+      if(fscanf(fd, "%lg %lg", &All.bkg_z[All.bkgLength], &All.bkgNorm[All.bkgLength]) == 2)
+	All.bkgLength++;
       else
 	break;
     }
-  while(All.xrbLength < MAXLEN_HEATLIST);
+  while(All.bkgLength < MAXLEN_HEATLIST);
   fclose(fd);
 
-  printf("\nfound %d redshift points in X-ray background intensity list.\n", All.xrbLength);
+  printf("\nfound %d redshift points in X-ray background intensity list.\n", All.bkgLength);
 
   return 0;
 }
-#endif /* XRAY_VARIABLE_HEATING */
-
-#ifdef CR_VARIABLE_HEATING
-/*! this function reads a table containing the average Cosmic Ray background energy density
- *  as a function of redshift. Table must be sorted in descending redshift order,
- *  and may not contain more than MAXLEN_HEATLIST entries.
- */
-int read_crbIntensity(char *fname)
-{
-  FILE *fd;
-
-  if(!(fd = fopen(fname, "r")))
-    {
-      printf("can't read cosmic ray background intensity list in file '%s'\n", fname);
-      return 1;
-    }
-
-  All.crbLength = 0;
-  do
-    {
-      if(fscanf(fd, "%lg %lg", &All.U_CRz[All.crbLength], &All.U_CR[All.crbLength]) == 2)
-	All.crbLength++;
-      else
-	break;
-    }
-  while(All.crbLength < MAXLEN_HEATLIST);
-  fclose(fd);
-
-  printf("\nfound %d redshift points in cosmic ray background intensity list.\n", All.crbLength);
-
-  return 0;
-}
-#endif /* CR_VARIABLE_HEATING */
+#endif /* VARIABLE_HEATING */
 
 #ifdef KH_RATE_TABLE
 /*! this function reads a table containing the average X-ray background intensity
@@ -1427,7 +1376,6 @@ int read_kh_rate_table(char *fname)
   return 0;
 }
 #endif /* KH_RATE_TABLE */
-#endif /* XRAY_VARIABLE_HEATING || COSMIC_RAY_BACKGROUND */
 
 /*! If a restart from restart-files is carried out where the TimeMax
  *  variable is increased, then the integer timeline needs to be

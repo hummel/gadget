@@ -80,7 +80,7 @@ c
       parameter (G_n = GRAVITY)
 #endif
 
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
       REAL gammaHeat_HI, gammaHeat_HeI
 #ifdef KH_RATE_TABLE
       INTEGER ix
@@ -442,7 +442,7 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
 #endif
 
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
 #ifdef KH_RATE_TABLE
       logn = LOG10(yn)
 c      ix = FLOOR((logn - khn(1))/khrange * KH_RATE_LEN)+1
@@ -592,7 +592,7 @@ c
      $          +  ph5  * abh2p                 ! Photodissoc:    H2+ + PH
      $          +  cr1  * abHI                  ! Cosmic ray ion.:  H + CR
      $          + ph38  * abhI                  ! Photoion: H + PH
-#ifdef XRAY_BACKGROUND
+#ifdef IONIZING_BACKGROUND
 #ifdef XRAY_SECONDARY_IONIZATION
      $          + gammaBol_HI_sec               ! Secondary ionization by e-
 #endif
@@ -675,7 +675,7 @@ c
      $              + cr6     * abheI
      $              + ph39    * abheI
      $              - ph40    * abhep
-#ifdef XRAY_BACKGROUND
+#ifdef IONIZING_BACKGROUND
 #ifdef XRAY_SECONDARY_IONIZATION
      $              + gammaBol_HeI_sec              ! Secondary ionization by e-
 #endif

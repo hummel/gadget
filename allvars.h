@@ -261,7 +261,7 @@ extern FILE *FdCPU;        /*!< file handle for cpu.txt log-file. */
 /*Sink*/
 extern FILE *FdSink;        /*!< file handle for sink.txt log-file. */
 
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
 extern FILE *FdHeat;  /*!< file handle for heating.dat log-file. */
 #endif
 
@@ -549,18 +549,15 @@ extern struct global_data_all_processes
   char ResubmitCommand[MAXLEN_FILENAME];       /*!< name of script-file that will be executed for automatic restart */
   char OutputListFilename[MAXLEN_FILENAME];    /*!< name of file with list of desired output times */
 
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#if defined(IONIZING_BACKGROUND)
   char HeatFile[MAXLEN_FILENAME];               /*!< name of file with heating info */
 #ifdef KH_RATE_TABLE
   char khRateFile[MAXLEN_FILENAME];               /*!< name of file with heating/ionization rate info */
 #endif /* KH_RATE_TABLE */
-#ifdef XRAY_VARIABLE_HEATING
-  char xrbFile[MAXLEN_FILENAME];               /*!< name of file with Xray background intensity info */
-#endif /* XRAY_VARIABLE_HEATING */
-#ifdef CR_VARIABLE_HEATING
-  char crbFile[MAXLEN_FILENAME];               /*!< name of file with Cosmic Ray background intensity info */
-#endif /* CR_VARIABLE_HEATING */
-#endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
+#ifdef VARIABLE_HEATING
+  char bkgFile[MAXLEN_FILENAME];               /*!< name of file with Xray background intensity info */
+#endif /* VARIABLE_HEATING */
+#endif /* IONIZING_BACKGROUND */
 
 
   double OutputListTimes[MAXLEN_OUTPUTLIST];   /*!< table with desired output times */
@@ -585,7 +582,7 @@ extern struct global_data_all_processes
   FLOAT EOSEnergy[MAX_SIZE_EOS_TABLE];
 #endif
 
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#if defined(IONIZING_BACKGROUND)
 #define MAXLEN_HEATLIST      5000   /*!< maxmimum number of entries in background radiation file */
 #ifdef KH_RATE_TABLE
 #define KH_RATE_LEN 82
@@ -594,28 +591,21 @@ extern struct global_data_all_processes
 #endif /* KH_RATE_TABLE */
 #endif
 
-   /* X-ray background intensity */
-#ifdef XRAY_BACKGROUND
-  double xrbIntensity;
-  double XR_heat_ion_base[6];
-#ifdef XRAY_VARIABLE_HEATING
-  double Jz[MAXLEN_HEATLIST], Jxr[MAXLEN_HEATLIST];
-  int xrbLength;
-#endif /* XRAY_VARIABLE_HEATING */
-#endif /* XRAY_BACKGROUND */
+   /* Ionizing background intensity */
+#ifdef IONIZING_BACKGROUND
+#ifdef VARIABLE_HEATING
+  double bkg_z[MAXLEN_HEATLIST], bkgNorm[MAXLEN_HEATLIST];
+  int bkgLength;
+#endif /* VARIABLE_HEATING */
 
-   /* Cosmic ray background intensity */
-#ifdef  COSMIC_RAY_BACKGROUND
-  double crbIntensity;
+  double bkgIntensity;
+  double heat_ion_base[6];
+#if IONIZING_BACKGROUND == 2 
   double CR_heat;
   double CR_spectrum_min;
   double CR_spectrum_max;
-  double CR_base_integral;
-#ifdef CR_VARIABLE_HEATING
-  double U_CRz[MAXLEN_HEATLIST], U_CR[MAXLEN_HEATLIST];
-  int crbLength;
-#endif /* CR_VARIABLE_HEATING */
-#endif /* COSMIC_RAY_BACKGROUND */
+#endif
+#endif /* IONIZING_BACKGROUND */
 
    /* SINK: add variables for sink particles */
 
@@ -1215,13 +1205,13 @@ extern struct{
   double ray_NH2;
 #endif
   double heat_ion[7];
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
 #ifdef KH_RATE_TABLE
   double znorm;
   double khn[KH_RATE_LEN], krH[KH_RATE_LEN], krHe[KH_RATE_LEN], krHep[KH_RATE_LEN];
   double hrH[KH_RATE_LEN], hrHe[KH_RATE_LEN], hrHep[KH_RATE_LEN];
 #endif /* KH_RATE_TABLE */
-#endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
+#endif /* IONIZING_BACKGROUND */
 }COOLR;
 
 extern struct{

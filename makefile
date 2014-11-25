@@ -85,13 +85,10 @@ OPT   += -DCHEMISTRYNETWORK=1
 #OPT   += -DMETALS_TG
 #--------------------------------------- Sink Particles
 OPT += -DSINKVAL
-#--------------------------------------- X-ray Ionizing Background
-#OPT += -DXRAY_BACKGROUND
-#OPT += -DXRAY_VARIABLE_HEATING
+#--------------------------------------- Ionizing Background
+OPT += -DIONIZING_BACKGROUND=2
+OPT += -DVARIABLE_HEATING
 #OPT += -DXRAY_SECONDARY_IONIZATION
-#--------------------------------------- Cosmic Ray Ionizing Background
-OPT += -DCOSMIC_RAY_BACKGROUND
-OPT += -DCR_VARIABLE_HEATING
 #--------------------------------------- XR or CR heat/ion table
 OPT += -DKH_RATE_TABLE
 
