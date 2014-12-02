@@ -382,7 +382,7 @@ void open_outputfiles(void)
     }
 /*SINK*/
 
-#if defined(IONIZING_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
   sprintf(buf, "%s%s", All.OutputDir, All.HeatFile);
   if(!(FdHeat = fopen(buf, mode)))
     {
@@ -419,7 +419,7 @@ void close_outputfiles(void)
   fclose(FdTimings);
 /*SINK*/
   fclose(FdSink);
-#if defined(IONIZING_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
   fclose(FdHeat);
 #endif
 #ifdef FORCETEST
@@ -518,7 +518,7 @@ void read_parameter_file(char *fname)
       id[nt++] = STRING;
 
       /* Ionizing Background */
-#if defined(IONIZING_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
       strcpy(tag[nt], "HeatFile");
       addr[nt] = All.HeatFile;
       id[nt++] = STRING;

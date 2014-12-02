@@ -549,7 +549,7 @@ extern struct global_data_all_processes
   char ResubmitCommand[MAXLEN_FILENAME];       /*!< name of script-file that will be executed for automatic restart */
   char OutputListFilename[MAXLEN_FILENAME];    /*!< name of file with list of desired output times */
 
-#if defined(IONIZING_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
   char HeatFile[MAXLEN_FILENAME];               /*!< name of file with heating info */
 #ifdef KH_RATE_TABLE
   char khRateFile[MAXLEN_FILENAME];               /*!< name of file with heating/ionization rate info */
@@ -582,7 +582,7 @@ extern struct global_data_all_processes
   FLOAT EOSEnergy[MAX_SIZE_EOS_TABLE];
 #endif
 
-#if defined(IONIZING_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
 #define MAXLEN_HEATLIST      5000   /*!< maxmimum number of entries in background radiation file */
 #ifdef KH_RATE_TABLE
 #define KH_RATE_LEN 82
