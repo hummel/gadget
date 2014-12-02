@@ -264,14 +264,15 @@ double alpha_calc(int numtot);
 void ghost(void);
 #endif
 
+#ifdef IONIZING_BACKGROUND
+void heat_ion_rates(void);
 #if IONIZING_BACKGROUND == 1
 void initialize_xray_background(int rad_type);
-void xray_heat_ion_rates(void);
 #endif
 #if IONIZING_BACKGROUND == 2
 void initialize_cosmic_ray_background(void);
-void cosmic_ray_heat_ion_rates(void);
 #endif
+#endif /* IONIZING_BACKGROUND */
 
 #ifdef VARIABLE_HEATING
 int    read_bkgIntensity(char *fname);
