@@ -752,13 +752,11 @@ void every_timestep_stuff(double dens_max)
 	}
 
 #ifdef IONIZING_BACKGROUND
+      fprintf(FdHeat,"%e %e ", z, dens_max);
 #ifdef KH_RATE_TABLE
-      fprintf(FdHeat,"%e %e %e %e %e %e %e %e %e %e\n",
-	      z, dens_max, All.tracer_dens, All.znorm,
-#else
-      fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
-	      z, dens_max,
-#endif /* KH_RATE_TABLE */
+      fprintf(FdHeat,"%e %e \n", All.tracer_dens, All.znorm);
+#endif
+      fprintf(FdHeat,"%e %e %e %e %e %e\n",
 	      All.heat_ion[0], All.heat_ion[1], All.heat_ion[2],
 	      All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
       fflush(FdHeat);
