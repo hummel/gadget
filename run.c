@@ -753,8 +753,8 @@ void every_timestep_stuff(double dens_max)
 
 #ifdef IONIZING_BACKGROUND
 #ifdef KH_RATE_TABLE
-      fprintf(FdHeat,"%e %e %e %e %e %e %e %e %e\n",
-	      z, dens_max, All.tracer_dens,
+      fprintf(FdHeat,"%e %e %e %e %e %e %e %e %e %e\n",
+	      z, dens_max, All.tracer_dens, All.znorm,
 #else
       fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
 	      z, dens_max,

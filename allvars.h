@@ -587,7 +587,7 @@ extern struct global_data_all_processes
 #define MAXLEN_HEATLIST      5000   /*!< maxmimum number of entries in background radiation file */
 #ifdef KH_RATE_TABLE
 #define KH_RATE_LEN 82
-  double tracer_dens;
+  double tracer_dens, znorm;
   double khn[KH_RATE_LEN], krH[KH_RATE_LEN], krHe[KH_RATE_LEN], krHep[KH_RATE_LEN];
   double hrH[KH_RATE_LEN], hrHe[KH_RATE_LEN], hrHep[KH_RATE_LEN];
 #endif /* KH_RATE_TABLE */
