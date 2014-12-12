@@ -1174,6 +1174,12 @@ void read_parameter_file(char *fname)
 #endif /* VARIABLE_HEATING */
 
 #ifdef KH_RATE_TABLE
+      All.tracer_dens = 0.0;
+      for(i=0; i<=6; i++)
+	{
+	  All.heat_ion[i] = 0.0;
+	}
+
       if(errorFlag == 0)
 	errorFlag += read_kh_rate_table(All.khRateFile);
 #endif
