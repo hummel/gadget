@@ -375,7 +375,9 @@ void advance_and_find_timesteps(void)
 #ifdef KH_RATE_TABLE
 	      if(P[i].ID == 2449682)
 		{
-		  All.tracer_dens = SphP[i].Density;
+		  All.tracer_dens = SphP[i].Density*All.UnitDensity_in_cgs \
+		    *All.HubbleParam*All.HubbleParam/All.Time/All.Time/All.Time \ 
+		    *HYDROGEN_MASSFRAC/PROTONMASS;
 		  for(i=0; i<=6; i++)
 		    {
 		      All.heat_ion[i] = COOLR.heat_ion[i];
