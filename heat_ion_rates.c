@@ -37,7 +37,7 @@ void heat_ion_rates()
 #endif /* VARIABLE_HEATING */
 
 #ifdef KH_RATE_TABLE
-  COOLR.znorm = All.znorm = norm;
+  COOLR.znorm = norm;
 #else
   All.heat_ion[0] = norm * All.heat_ion_base[0]; // HI heat
   All.heat_ion[1] = norm * All.heat_ion_base[1]; // HeI heat
