@@ -754,7 +754,7 @@ void every_timestep_stuff(double dens_max)
 #ifdef IONIZING_BACKGROUND
       fprintf(FdHeat,"%e %e ", z, dens_max);
 #ifdef KH_RATE_TABLE
-      fprintf(FdHeat,"%e %e ", All.tracer_dens, All.znorm);
+      fprintf(FdHeat,"%e %e \n", All.tracer_dens, All.znorm);
 #endif
       fprintf(FdHeat,"%e %e %e %e %e %e\n",
 	      All.heat_ion[0], All.heat_ion[1], All.heat_ion[2],
