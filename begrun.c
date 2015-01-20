@@ -1311,7 +1311,7 @@ int read_outputlist(char *fname)
 
   fclose(fd);
 
-  printf("\nfound %d times in output-list.", All.OutputListLength);
+  printf("\nfound %d times in output-list.\n", All.OutputListLength);
 
   return 0;
 }
@@ -1342,7 +1342,7 @@ int read_bkgIntensity(char *fname)
   while(All.bkgLength < MAXLEN_HEATLIST);
   fclose(fd);
 
-  printf("\nfound %d redshift points in X-ray background intensity list.", All.bkgLength);
+  printf("\nfound %d redshift points in X-ray background intensity list.\n", All.bkgLength);
 
   return 0;
 }
@@ -1377,7 +1377,7 @@ int read_kh_rate_table(char *fname)
   while(khlen < 100);
   fclose(fd);
 
-  printf("\nfound %d entries in heating and ionization table.\n", khlen);
+  printf("\nfound %d redshift points in X-ray background intensity list.\n", khlen);
 
   return 0;
 }
