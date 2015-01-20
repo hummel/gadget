@@ -159,18 +159,6 @@ void advance_and_find_timesteps(void)
   All.CPU_Raytrace += timediff(t2, t3);
 #endif /* RAYTRACE && CHEMCOOL */
 
-  /* Zero out tracer_dens and heat_ion so we can record values for
-   * the tracer particle at this new timestep.
-   */
-#ifdef KH_RATE_TABLE
-  All.tracer_dens = 0.0;
-  for(i=0; i<=6; i++)
-    {
-      All.heat_ion[i] = 0.0;
-    }
-#endif
-
-
   /* Now assign new timesteps and kick */
 
   if((All.Ti_Current % (4 * All.PresentMinStep)) == 0)
@@ -372,16 +360,6 @@ void advance_and_find_timesteps(void)
 		  SphP[i].EntropyOut = SphP[i].Entropy;
 		}
 	      }
-#ifdef KH_RATE_TABLE
-	      if(P[i].ID == 2449682)
-		{
-		  All.tracer_dens = SphP[i].Density;
-		  for(i=0; i<=6; i++)
-		    {
-		      All.heat_ion[i] = COOLR.heat_ion[i];
-		    }
-		}
-#endif /* KH_RATE_TABLE */
 
  	      if (dt_entr > 0 && SphP[i].sink < 0.5) {
   	        SphP[i].DtEntropy = (SphP[i].Entropy - old_entropy) / dt_entr;

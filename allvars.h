@@ -582,16 +582,17 @@ extern struct global_data_all_processes
   FLOAT EOSEnergy[MAX_SIZE_EOS_TABLE];
 #endif
 
-   /* Ionizing background intensity */
 #ifdef IONIZING_BACKGROUND
 #define MAXLEN_HEATLIST      5000   /*!< maxmimum number of entries in background radiation file */
 #ifdef KH_RATE_TABLE
 #define KH_RATE_LEN 82
-  double tracer_dens;
   double khn[KH_RATE_LEN], krH[KH_RATE_LEN], krHe[KH_RATE_LEN], krHep[KH_RATE_LEN];
   double hrH[KH_RATE_LEN], hrHe[KH_RATE_LEN], hrHep[KH_RATE_LEN];
 #endif /* KH_RATE_TABLE */
+#endif
 
+   /* Ionizing background intensity */
+#ifdef IONIZING_BACKGROUND
 #ifdef VARIABLE_HEATING
   double bkg_z[MAXLEN_HEATLIST], bkgNorm[MAXLEN_HEATLIST];
   int bkgLength;
