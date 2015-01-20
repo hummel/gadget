@@ -264,18 +264,20 @@ double alpha_calc(int numtot);
 void ghost(void);
 #endif
 
-#ifdef XRAY_BACKGROUND
+#ifdef IONIZING_BACKGROUND
+void heat_ion_rates(void);
+#if IONIZING_BACKGROUND == 1
 void initialize_xray_background(int rad_type);
-void xray_heat_ion_rates(void);
-#ifdef XRAY_VARIABLE_HEATING
-int    read_xrbIntensity(char *fname);
-#endif /* XRAY_VARIABLE_HEATING */
-#endif /* XRAY_BACKGROUND */
-
-#ifdef COSMIC_RAY_BACKGROUND
+#endif
+#if IONIZING_BACKGROUND == 2
 void initialize_cosmic_ray_background(void);
-void cosmic_ray_heat_ion_rates(void);
-#ifdef CR_VARIABLE_HEATING
-int    read_crbIntensity(char *fname);
-#endif /* CR_VARIABLE_HEATING */
-#endif /* COSMIC_RAY_BACKGROUND */
+#endif
+#endif /* IONIZING_BACKGROUND */
+
+#ifdef VARIABLE_HEATING
+int    read_bkgIntensity(char *fname);
+#endif /* VARIABLE_HEATING */
+
+#ifdef KH_RATE_TABLE
+int read_kh_rate_table(char *fname);
+#endif

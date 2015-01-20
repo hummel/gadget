@@ -154,12 +154,7 @@ void run(void)
 
 /*SINKS*/
       MPI_Barrier(MPI_COMM_WORLD);
-
       tstart = second();
-
-      if(ThisTask == 0)
-         printf("line 144 of run.c - before sink()\n");
-
       if(All.NumCurrentTiStep % 10 == 0 || All.NumCurrentTiStep == 0)
        {
        sink();
@@ -170,10 +165,6 @@ void run(void)
              {    
              printf("sinkval = %g \n", SphP[i].sink);
              }
-
-       if(ThisTask == 0)
-         printf("line 144 of run.c - after sink()\n");
-
        if(All.NumCurrentTiStep % 10 == 0 || All.NumCurrentTiStep == 0)
        {
        accrete();
@@ -186,11 +177,8 @@ void run(void)
              }
 
       tend = second();
-
       All.CPU_Sinks += timediff(tstart,tend);
-
       MPI_Barrier(MPI_COMM_WORLD);
-
       if(nsinks)
         {
           All.NumForcesSinceLastDomainDecomp = All.TotNumPart * All.TreeDomainUpdateFrequency + 1;
@@ -306,7 +294,7 @@ void find_next_sync_point_and_drift(void)
   long long int min_glob, min;
   double timeold;
   double t0, t1;
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
   int task_max;
 #endif
 #ifdef RAYTRACE_TG
@@ -492,31 +480,9 @@ void find_next_sync_point_and_drift(void)
     }
 #endif
 
-
-#ifdef XRAY_BACKGROUND
-        initialize_heat_ion_rates();
-#endif
-#ifdef COSMIC_RAY_BACKGROUND
-        cosmic_ray_heat_ion_rates();
-#endif
-
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
-        for(i=0; i<=6; i++)
-          {
-           COOLR.heat_ion[i] = All.heat_ion[i];
-          }
-        MPI_Bcast(&COOLR.heat_ion, 7, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-        MPI_Bcast(&All.heat_ion, 7, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
-
-        if(ThisTask == 0)
-	  {
-	    for(i=0; i<=6; i++)
-	      {
-                printf("COOLR heat_ion %d = %lg\n", i, COOLR.heat_ion[i]); 
-	      }
-	    fflush(stdout);
-	  }
-#endif
+#ifdef IONIZING_BACKGROUND
+  heat_ion_rates();
+#endif /* IONIZING_BACKGROUND */
 
   while(min_glob >= All.Ti_nextoutput && All.Ti_nextoutput >= 0)
     {
@@ -599,8 +565,6 @@ long long int find_next_outputtime(long long int ti_curr)
              if(nh_local > nh_max)
                nh_max = nh_local;
            }
-
-       //nh_max = All.SinkCriticalDens;
 
        MPI_Allreduce(&nh_max, &tot_nh_max, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
 
@@ -749,14 +713,6 @@ void every_timestep_stuff(double dens_max)
 	  printf("\nBegin Step %d, Time: %15.11g, Redshift: %g, Systemstep: %g, Dloga: %g\n", All.NumCurrentTiStep,
 		 All.Time, z, All.TimeStep, log(All.Time) - log(All.Time - All.TimeStep));
 	  fflush(FdInfo);
-
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
-	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
-		  z, dens_max, 
-		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
-		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
-	  fflush(FdHeat);
-#endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
 	}
       else
 	{
@@ -764,15 +720,18 @@ void every_timestep_stuff(double dens_max)
 		  All.TimeStep);
 	  printf("\nBegin Step %d, Time: %15.11g, Systemstep: %g\n", All.NumCurrentTiStep, All.Time, All.TimeStep);
 	  fflush(FdInfo);
-
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
-	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
-		  All.Time, dens_max, 
-		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
-		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
-	  fflush(FdHeat);
-#endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
 	}
+
+#ifdef IONIZING_BACKGROUND
+      fprintf(FdHeat,"%e %e ", z, dens_max);
+#ifdef KH_RATE_TABLE
+      fprintf(FdHeat,"%e %e ", All.tracer_dens, All.znorm);
+#endif
+      fprintf(FdHeat,"%e %e %e %e %e %e\n",
+	      All.heat_ion[0], All.heat_ion[1], All.heat_ion[2],
+	      All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
+      fflush(FdHeat);
+#endif /* IONIZING_BACKGROUND */
 
       fprintf(FdCPU, "Step %d, Time: %g, CPUs: %d\n", All.NumCurrentTiStep, All.Time, NTask);
       fprintf(FdCPU,

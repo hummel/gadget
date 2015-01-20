@@ -80,7 +80,7 @@ c
       parameter (G_n = GRAVITY)
 #endif
 
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
       REAL gammaHeat_HI, gammaHeat_HeI
 #ifdef KH_RATE_TABLE
       INTEGER ix
@@ -442,21 +442,27 @@ c     ray_coeff_min is mininmum heating distance in physical pc
 
 #endif
 
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
 #ifdef KH_RATE_TABLE
       logn = LOG10(yn)
 c      ix = FLOOR((logn - khn(1))/khrange * KH_RATE_LEN)+1
 c     table lookup
       ix = MAX(1, MIN(KH_RATE_LEN-1, MAXLOC(khn, 1, khn.le.logn)))
-c     interpolate table position and multiply by
-c     redshift-dependent normalization factor
-      wx = znorm * (logn - khn(ix))/(khn(ix+1) - khn(ix))
+c     interpolate table position
+      wx = (logn - khn(ix))/(khn(ix+1) - khn(ix))
       heat_ion(4) = wx*(krH(ix+1) - krH(ix)) + krH(ix)
       heat_ion(5) = wx*(krHe(ix+1) - krHe(ix)) + krHe(ix)
       heat_ion(6) = wx*(krHep(ix+1) - krHep(ix)) + krHep(ix)
       heat_ion(1) = wx*(hrH(ix+1) - hrH(ix)) + hrH(ix)
       heat_ion(2) = wx*(hrHe(ix+1) - hrHe(ix)) + hrHe(ix)
       heat_ion(3) = wx*(hrHep(ix+1) - hrHep(ix)) + hrHep(ix)
+c     Multiply by redshift-dependent normalization factor
+      heat_ion(1) = heat_ion(1) * znorm
+      heat_ion(2) = heat_ion(2) * znorm
+      heat_ion(3) = heat_ion(3) * znorm
+      heat_ion(4) = heat_ion(4) * znorm
+      heat_ion(5) = heat_ion(5) * znorm
+      heat_ion(6) = heat_ion(6) * znorm
 #endif
       ph38 =  ph38 + heat_ion(4) ! HI ion
       ph39 =  ph39 + heat_ion(5) ! HeI ion
@@ -475,14 +481,12 @@ c     redshift-dependent normalization factor
          ionfrac = 0.0
       endif
 
-#if XRAY_SECONDARY_IONIZATION == 1
 !     Shull & Van Steenberg (1985)
       fH_ion = 0.3908 * (1.0 - ionfrac**(0.4092))**(1.7592)
       fHe_ion = 0.0554 * (1.0 - ionfrac**(0.4614))**(1.6660)
 
       fH_heat = 0.9971 * (1.0 - (1.0-ionfrac**(0.2263))**(1.3163))
       fHe_heat = fH_heat
-#endif
       gammaBol_HI_sec = (abHI*gammaHeat_HI + abHeI*gammaHeat_HeI)
      $     * fH_ion / (13.6 * eV_in_cgs);
 
@@ -588,7 +592,7 @@ c
      $          +  ph5  * abh2p                 ! Photodissoc:    H2+ + PH
      $          +  cr1  * abHI                  ! Cosmic ray ion.:  H + CR
      $          + ph38  * abhI                  ! Photoion: H + PH
-#ifdef XRAY_BACKGROUND
+#ifdef IONIZING_BACKGROUND
 #ifdef XRAY_SECONDARY_IONIZATION
      $          + gammaBol_HI_sec               ! Secondary ionization by e-
 #endif
@@ -671,7 +675,7 @@ c
      $              + cr6     * abheI
      $              + ph39    * abheI
      $              - ph40    * abhep
-#ifdef XRAY_BACKGROUND
+#ifdef IONIZING_BACKGROUND
 #ifdef XRAY_SECONDARY_IONIZATION
      $              + gammaBol_HeI_sec              ! Secondary ionization by e-
 #endif

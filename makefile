@@ -85,14 +85,11 @@ OPT   += -DCHEMISTRYNETWORK=1
 #OPT   += -DMETALS_TG
 #--------------------------------------- Sink Particles
 OPT += -DSINKVAL
-#--------------------------------------- X-ray Ionizing Background
-#OPT += -DXRAY_BACKGROUND
-#OPT += -DXRAY_VARIABLE_HEATING
-#OPT += -DXRAY_SECONDARY_IONIZATION
-#--------------------------------------- Cosmic Ray Ionizing Background
-OPT += -DCOSMIC_RAY_BACKGROUND
-OPT += -DCR_VARIABLE_HEATING
-#--------------------------------------- Heating & Ionization - density table
+#--------------------------------------- Ionizing Background
+OPT += -DIONIZING_BACKGROUND=1
+OPT += -DVARIABLE_HEATING
+OPT += -DXRAY_SECONDARY_IONIZATION
+#--------------------------------------- XR or CR heat/ion table
 OPT += -DKH_RATE_TABLE
 
 #----------------------------------------------------------------------
@@ -106,9 +103,7 @@ OPT += -DKH_RATE_TABLE
 #============================================================================
 
 #SYSTYPE="stampede"
-#SYSTYPE="lonestar"
 SYSTYPE="r900"
-#SYSTYPE="cauthon"
 
 #============================================================================
 # Specific compilation flags
@@ -151,22 +146,6 @@ HDF5INCL  = -I/home/r900-1/pawlik/sw/hdf5/include
 HDF5LIB   = -L/home/r900-1/pawlik/sw/hdf5/lib -lhdf5
 endif
 
-ifeq ($(SYSTYPE),"cauthon")
-CC        = cc 
-FC        = gfortran
-#OPTIMIZE  = -Wall -g -O3
-OPTIMIZE  = -Wall -g3
-
-GSL_LIBS  = -lgsl -lgslcblas -lm 
-FFTW_LIBS = -lsrfftw_mpi -lsfftw_mpi -lsrfftw -lsfftw 
-MPICHLIB  =
-HDF5LIB   = -lhdf5
-endif
-
-ifneq (HAVE_HDF5,$(findstring HAVE_HDF5,$(OPT))) 
-HDF5INCL =
-HDF5LIB  =
-endif
 
 OPTIONS = $(OPTIMIZE) $(OPT)
 
