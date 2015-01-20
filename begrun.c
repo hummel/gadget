@@ -829,12 +829,6 @@ void read_parameter_file(char *fname)
 #endif /* VARIABLE_HEATING */
 
 #ifdef KH_RATE_TABLE
-      All.tracer_dens = 0.0;
-      for(i=0; i<=6; i++)
-	{
-	  All.heat_ion[i] = 0.0;
-	}
-
       if(errorFlag == 0)
 	errorFlag += read_kh_rate_table(All.khRateFile);
 #endif
@@ -962,7 +956,7 @@ int read_outputlist(char *fname)
 
   fclose(fd);
 
-  printf("\nfound %d times in output-list.", All.OutputListLength);
+  printf("\nfound %d times in output-list.\n", All.OutputListLength);
 
   return 0;
 }
@@ -993,7 +987,7 @@ int read_bkgIntensity(char *fname)
   while(All.bkgLength < MAXLEN_HEATLIST);
   fclose(fd);
 
-  printf("\nfound %d redshift points in X-ray background intensity list.", All.bkgLength);
+  printf("\nfound %d redshift points in X-ray background intensity list.\n", All.bkgLength);
 
   return 0;
 }
@@ -1033,4 +1027,4 @@ int read_kh_rate_table(char *fname)
   return 0;
 }
 #endif /* KH_RATE_TABLE */
-#endif /* XRAY_VARIABLE_HEATING || COSMIC_RAY_BACKGROUND */
+

@@ -281,7 +281,7 @@ c
       integer ray_flag_sun
 #endif
       REAL heat_ion(7)
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
 #ifdef KH_RATE_TABLE
 #define KH_RATE_LEN 82
       REAL znorm
@@ -293,7 +293,7 @@ c
       REAL hrHe(KH_RATE_LEN)
       REAL hrHep(KH_RATE_LEN)
 #endif /* KH_RATE_TABLE */
-#endif /* XRAY_BACKGROUND || COSMIC_RAY_BACKGROUND */
+#endif /* XRAY_BACKGROUND */
 
       common /coolr/ temptab, cltab, chtab, dtcltab, dtchtab, 
      $               crtab, crphot, 

@@ -86,9 +86,9 @@ OPT   += -DCHEMISTRYNETWORK=1
 #--------------------------------------- Sink Particles
 OPT += -DSINKVAL
 #--------------------------------------- Ionizing Background
-OPT += -DIONIZING_BACKGROUND=1
+OPT += -DIONIZING_BACKGROUND=2
 OPT += -DVARIABLE_HEATING
-OPT += -DXRAY_SECONDARY_IONIZATION
+#OPT += -DXRAY_SECONDARY_IONIZATION
 #--------------------------------------- XR or CR heat/ion table
 OPT += -DKH_RATE_TABLE
 

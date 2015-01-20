@@ -482,6 +482,24 @@ void find_next_sync_point_and_drift(void)
 
 #ifdef IONIZING_BACKGROUND
   heat_ion_rates();
+
+#ifndef KH_RATE_TABLE
+  for(i=0; i<=6; i++)
+    {
+      COOLR.heat_ion[i] = All.heat_ion[i];
+    }
+  MPI_Bcast(&COOLR.heat_ion, 7, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  MPI_Bcast(&All.heat_ion, 7, MPI_DOUBLE, task_max, MPI_COMM_WORLD);
+  
+  if(ThisTask == 0)
+    {
+      for(i=0; i<=6; i++)
+	{
+	  printf("COOLR heat_ion %d = %lg\n", i, COOLR.heat_ion[i]); 
+	}
+      fflush(stdout);
+    }
+#endif /* !KH_RATE_TABLE */
 #endif /* IONIZING_BACKGROUND */
 
   while(min_glob >= All.Ti_nextoutput && All.Ti_nextoutput >= 0)
@@ -713,6 +731,14 @@ void every_timestep_stuff(double dens_max)
 	  printf("\nBegin Step %d, Time: %15.11g, Redshift: %g, Systemstep: %g, Dloga: %g\n", All.NumCurrentTiStep,
 		 All.Time, z, All.TimeStep, log(All.Time) - log(All.Time - All.TimeStep));
 	  fflush(FdInfo);
+
+#ifdef IONIZING_BACKGROUND
+	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
+		  z, dens_max, 
+		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
+		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
+	  fflush(FdHeat);
+#endif /* IONIZING_BACKGROUND */
 	}
       else
 	{
@@ -720,18 +746,15 @@ void every_timestep_stuff(double dens_max)
 		  All.TimeStep);
 	  printf("\nBegin Step %d, Time: %15.11g, Systemstep: %g\n", All.NumCurrentTiStep, All.Time, All.TimeStep);
 	  fflush(FdInfo);
-	}
 
 #ifdef IONIZING_BACKGROUND
-      fprintf(FdHeat,"%e %e ", z, dens_max);
-#ifdef KH_RATE_TABLE
-      fprintf(FdHeat,"%e %e ", All.tracer_dens, All.znorm);
-#endif
-      fprintf(FdHeat,"%e %e %e %e %e %e\n",
-	      All.heat_ion[0], All.heat_ion[1], All.heat_ion[2],
-	      All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
-      fflush(FdHeat);
+	  fprintf(FdHeat,"%e %e %e %e %e %e %e %e\n",
+		  All.Time, dens_max, 
+		  All.heat_ion[0], All.heat_ion[1], All.heat_ion[2], 
+		  All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
+	  fflush(FdHeat);
 #endif /* IONIZING_BACKGROUND */
+	}
 
       fprintf(FdCPU, "Step %d, Time: %g, CPUs: %d\n", All.NumCurrentTiStep, All.Time, NTask);
       fprintf(FdCPU,

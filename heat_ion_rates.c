@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "allvars.h"
-#if defined(XRAY_BACKGROUND) || defined(COSMIC_RAY_BACKGROUND)
+#ifdef IONIZING_BACKGROUND
 #include "proto.h"
 #endif
 
@@ -13,122 +13,42 @@
 #define k_B 1.3806e-16
 #define pc 3.085678e18
 
-#ifdef COSMIC_RAY_BACKGROUND
-void initialize_cosmic_ray_background(void)
+#ifdef IONIZING_BACKGROUND
+void heat_ion_rates()
 {
   int i;
-  int N_i_steps = 1000;
-  double e_min, e_max, logmin, logmax;
-  double epsilon, e_start, e_stop, De;
-  double beta_0 = 0.01, restE = 938272046; // Rest energy of proton in eV 
-  double E_lost = 50.0; // CR energy lost per ionization event.
-  double beta, crfunc, integrand, integral=0;
-  e_min = All.CR_spectrum_min;
-  e_max = All.CR_spectrum_max;
-  logmin = log10(e_min);
-  logmax = log10(e_max);
+  double z, norm;
+  norm = All.bkgIntensity;
 
-  for(i = 0; i < N_i_steps; i++)
-    {
-      epsilon = (logmax - logmin) / (double)(N_i_steps) * (i + 0.5) + logmin;
-      e_start = (logmax - logmin) / (double)(N_i_steps) * (i) + logmin;
-      e_stop = (logmax - logmin) / (double)(N_i_steps) * (i + 1.0) + logmin;
-      epsilon = pow(10, epsilon);
-      e_start = pow(10, e_start);
-      e_stop = pow(10, e_stop);
-      De = e_stop - e_start;
-      
-      beta = sqrt(1.0 - pow((epsilon / restE) + 1, -2.0));
-      crfunc = ((1.0 + 0.0185 * log(beta)) * 2*pow(beta, 2.0)
-		/ (pow(beta_0, 3.0) + 2*pow(beta, 3.0)));
-      integrand = crfunc / epsilon / epsilon / log(e_max / e_min);
-      integral += integrand * De;
-    }
-  All.CR_base_integral = 1.82e-7 * integral / E_lost;
-}
-
-/*! As currently written, this function OVERWRITES the heating and 
- *  ionization rates calculated in initialize_heat_ion_rates(), 
- *  the function for calculating X-ray heating and ionization.
- */
-void cosmic_ray_heat_ion_rates(void)
-{
-  int i;
-  double z, ucr, ion_rate, heat_rate;
-  ucr = All.crbIntensity;
-
-  #ifdef CR_VARIABLE_HEATING
+#ifdef VARIABLE_HEATING
   /* Variable background ramping up from high z */
   z = 1.0 / (All.Time) - 1;
   i = 0;
   do
     {
-      ucr = All.U_CR[i];
+      norm = All.bkgNorm[i];
       i++;
     }
-  while(All.U_CRz[i] > z);
-  ucr = ucr * All.crbIntensity;
-  #endif /* CR_VARIABLE_HEATING */
-
-  ucr = 6.24150934e11 * ucr; // convert energy density from erg to eV
-  ion_rate = ucr * All.CR_base_integral;
-  heat_rate = ion_rate * All.CR_heat;
-
-#ifdef KH_RATE_TABLE
-  COOLR.znorm = ucr;
-#else
-  All.heat_ion[0] = heat_rate; // HI heat
-  All.heat_ion[1] = 0.0;
-  All.heat_ion[2] = 0.0;
-  All.heat_ion[3] = ion_rate; // HI ion
-  All.heat_ion[4] = 0.0;
-  All.heat_ion[5] = 0.0;
-  All.heat_ion[6] = 0.0;
-  if(ThisTask==0)
-    {
-      printf("\nz: %lg  u_cr: %lg  base: %lg \n", z, ucr, All.CR_base_integral);
-      printf("Ionization Rates:\n   HI = %lg \n   HeI = %lg \n   HeII = %lg \n",
-	     All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
-      printf("Heating Rates:\n   HI = %lg \n   HeI = %lg \n   HeII = %lg \n",
-	     All.heat_ion[0], All.heat_ion[1], All.heat_ion[2]);
-    } 
+  while(All.bkg_z[i] > z);
+  norm *= All.bkgIntensity;
+#if IONIZING_BACKGROUND == 2
+  norm *= 6.24150934e11; // convert CR energy density from erg to eV
 #endif
-}
-#endif /* COSMIC_RAY_BACKGROUND */
-
-#ifdef XRAY_BACKGROUND
-void xray_heat_ion_rates()
-{
-  int i;
-  double z, J0;
-  J0 = All.xrbIntensity;
-
-#ifdef XRAY_VARIABLE_HEATING
-  /* Variable background ramping up from high z */
-  z = 1.0 / (All.Time) - 1;
-  i = 0;
-  do
-    {
-      J0 = All.Jxr[i];
-      i++;
-    }
-  while(All.Jz[i] > z);
-  J0 = J0 * All.xrbIntensity;
-#endif /* XRAY_VARIABLE_HEATING */
+#endif /* VARIABLE_HEATING */
 
 #ifdef KH_RATE_TABLE
-  COOLR.znorm = J0;
+  COOLR.znorm = norm;
 #else
-  All.heat_ion[0] = J0 * All.XR_heat_ion_base[0]; // HI heat
-  All.heat_ion[1] = J0 * All.XR_heat_ion_base[1]; // HeI heat
-  All.heat_ion[2] = J0 * All.XR_heat_ion_base[2]; // HeII heat
-  All.heat_ion[3] = J0 * All.XR_heat_ion_base[3]; // HI ion
-  All.heat_ion[4] = J0 * All.XR_heat_ion_base[4]; // HeI ion
-  All.heat_ion[5] = J0 * All.XR_heat_ion_base[5]; // HeII ion
+  All.heat_ion[0] = norm * All.heat_ion_base[0]; // HI heat
+  All.heat_ion[1] = norm * All.heat_ion_base[1]; // HeI heat
+  All.heat_ion[2] = norm * All.heat_ion_base[2]; // HeII heat
+  All.heat_ion[3] = norm * All.heat_ion_base[3]; // HI ion
+  All.heat_ion[4] = norm * All.heat_ion_base[4]; // HeI ion
+  All.heat_ion[5] = norm * All.heat_ion_base[5]; // HeII ion
   All.heat_ion[6] = 0.0; // No LW Background!
   if(ThisTask==0)
     {
-      printf("\nz: %lg  J0: %lg\n", z, J0);
+      printf("\nz: %lg  norm: %lg\n", z, norm);
       printf("Ionization Rates:\n   HI = %lg \n   HeI = %lg \n   HeII = %lg \n",
 	     All.heat_ion[3], All.heat_ion[4], All.heat_ion[5]);
       printf("Heating Rates:\n   HI = %lg \n   HeI = %lg \n   HeII = %lg \n",
@@ -136,7 +56,7 @@ void xray_heat_ion_rates()
     } 
 #endif
 }
-
+#if IONIZING_BACKGROUND == 1 
 void initialize_xray_background(int rad_type)
 {
   int i = 0;
@@ -204,21 +124,66 @@ void initialize_xray_background(int rad_type)
     }
   if(rad_type == 0)
     {
-      All.XR_heat_ion_base[3] = ion_rate; // HI ion
-      All.XR_heat_ion_base[0] = heat_rate; // HI heat
+      All.heat_ion_base[3] = ion_rate; // HI ion
+      All.heat_ion_base[0] = heat_rate; // HI heat
     }
   if(rad_type == 1)
     {
-      All.XR_heat_ion_base[4] = ion_rate; // HeI ion
-      All.XR_heat_ion_base[1] = heat_rate; // HeI heat
+      All.heat_ion_base[4] = ion_rate; // HeI ion
+      All.heat_ion_base[1] = heat_rate; // HeI heat
     }
   if(rad_type == 2)
     {
-      All.XR_heat_ion_base[5] = ion_rate; // HeII ion
-      All.XR_heat_ion_base[2] = heat_rate; // HeII heat
+      All.heat_ion_base[5] = ion_rate; // HeII ion
+      All.heat_ion_base[2] = heat_rate; // HeII heat
     }
 }
-#endif /* XRAY_BACKGROUND */
+#endif /* IONIZING_BACKGROUND == 1 */
+
+#if IONIZING_BACKGROUND == 2
+void initialize_cosmic_ray_background(void)
+{
+  int i;
+  int N_i_steps = 1000;
+  double e_min, e_max, logmin, logmax;
+  double epsilon, e_start, e_stop, De;
+  double ion_rate, heat_rate;
+  double beta_0 = 0.01, restE = 938272046; // Rest energy of proton in eV 
+  double E_lost = 50.0; // CR energy lost per ionization event.
+  double beta, crfunc, integrand, integral=0;
+  e_min = All.CR_spectrum_min;
+  e_max = All.CR_spectrum_max;
+  logmin = log10(e_min);
+  logmax = log10(e_max);
+
+  for(i = 0; i < N_i_steps; i++)
+    {
+      epsilon = (logmax - logmin) / (double)(N_i_steps) * (i + 0.5) + logmin;
+      e_start = (logmax - logmin) / (double)(N_i_steps) * (i) + logmin;
+      e_stop = (logmax - logmin) / (double)(N_i_steps) * (i + 1.0) + logmin;
+      epsilon = pow(10, epsilon);
+      e_start = pow(10, e_start);
+      e_stop = pow(10, e_stop);
+      De = e_stop - e_start;
+      
+      beta = sqrt(1.0 - pow((epsilon / restE) + 1, -2.0));
+      crfunc = ((1.0 + 0.0185 * log(beta)) * 2*pow(beta, 2.0)
+		/ (pow(beta_0, 3.0) + 2*pow(beta, 3.0)));
+      integrand = crfunc / epsilon / epsilon / log(e_max / e_min);
+      integral += integrand * De;
+    }
+  ion_rate = 1.82e-7 * integral / E_lost;
+  heat_rate = ion_rate * All.CR_heat;
+  All.heat_ion_base[3] = ion_rate;  // HI ion
+  All.heat_ion_base[0] = heat_rate; // HI heat
+  All.heat_ion_base[4] = 0.0;       // HeI ion
+  All.heat_ion_base[1] = 0.0;       // HeI heat
+  All.heat_ion_base[5] = 0.0;       // HeII ion
+  All.heat_ion_base[2] = 0.0;       // HeII heat
+
+}
+#endif /* IONIZING_BACKGROUND == 2 */
+#endif /* IONIZING_BACKGROUND */
 
 #ifdef RAYTRACE_TG
 double heat_ion_rates(int rad_type, double L3, double T3)
