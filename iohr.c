@@ -85,7 +85,7 @@ void savepositions(int num)
     {
       ntot_type_all[i] = 0;
       for(j = 0; j < NTask; j++)
-	ntot_type_all[i] += temp[j * 6 + i];
+	ntot_type_all[i] += temp[j * numtype + i];
     }
   free(temp);
 
@@ -96,9 +96,9 @@ void savepositions(int num)
   fill_Tab_IO_Labels();
 
   if(All.NumFilesPerSnapshot > 1)
-    sprintf(buf, "%s%s_%03d.%d", All.OutputDir, All.SnapshotFileBase, num, filenr);
+    sprintf(buf, "%s%s_%04d.%d", All.OutputDir, All.SnapshotFileBase, num, filenr);
   else
-    sprintf(buf, "%s%s_%03d", All.OutputDir, All.SnapshotFileBase, num);
+    sprintf(buf, "%s%s_%04d", All.OutputDir, All.SnapshotFileBase, num);
 
   ngroups = All.NumFilesPerSnapshot / All.NumFilesWrittenInParallel;
   if((All.NumFilesPerSnapshot % All.NumFilesWrittenInParallel))
