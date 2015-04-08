@@ -351,14 +351,24 @@ void read_file(char *fname, int readTask, int lastTask)
 	  SKIP;
 	  my_fread(&header, sizeof(header), 1, fd);
 	  SKIP2;
-/*
-	  if(blksize1 != 256 || blksize2 != 256)
+ 	  printf("sizeof(header): %zu\n sizeof(blksize1):%zu\n sizeof(blksize2)%zu\n",
+ 	  	 sizeof(header), sizeof(blksize1), sizeof(blksize2));
+  	  printf("blksize1: %d  blksize2: %d\n\n", blksize1, blksize2);
+ 	  printf("header.time: %g\n", header.time);
+ 	  printf("header.redshift: %g\n", header.redshift);
+ 	  printf("header.BoxSize: %g\n", header.BoxSize);
+ 	  printf("header.Omega0: %g\n", header.Omega0);
+ 	  printf("header.OmegaLambda: %g\n", header.OmegaLambda);
+ 	  printf("header.HubbleParam: %g\n\n", header.HubbleParam);
+ 	  fflush(stdout);
+
+	  if(blksize1 != blksize2)
 	    {
 	      printf("incorrect header format\n");
 	      fflush(stdout);
 	      endrun(890);
 	    }
-*/
+
 	}
 
 
