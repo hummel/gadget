@@ -121,7 +121,7 @@ typedef  long long  peanokey;    /*!< defines the variable type used for Peano-H
 #define MAXITER             1500    /*!< maxmimum number of steps for SPH neighbour iteration */
 
 
-#define numtype             6  //total number of particle types in the simulation
+#define numtype             20  //total number of particle types in the simulation
 
 #ifdef DOUBLEPRECISION             /*!< If defined, the variable type FLOAT is set to "double", otherwise to FLOAT */
 #define FLOAT double
