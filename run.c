@@ -43,7 +43,7 @@ void run(void)
       ion = 0;
       sink_tot_acc = sinkmass_sum = 0;   
       prad_avg = pres_avg = 0;
-      res_mass = 0.7;
+      res_mass = All.RefinementMass;
 
       a3=All.Time*All.Time*All.Time;
       a3inv=1.e0/a3;
@@ -108,7 +108,7 @@ void run(void)
             }
         }
 
-     if(.5*pow((res_mass/1.0e10*All.HubbleParam)/(tot_nh_max/All.UnitDensity_in_cgs/All.HubbleParam/All.HubbleParam*All.Time*All.Time*All.Time/HYDROGEN_MASSFRAC*PROTONMASS),1.0/3.0) <  0.001)
+     if(.5*pow((res_mass/1.0e10*All.HubbleParam)/(tot_nh_max/All.UnitDensity_in_cgs/All.HubbleParam/All.HubbleParam*All.Time*All.Time*All.Time/HYDROGEN_MASSFRAC*PROTONMASS),1.0/3.0) <  All.SofteningGas)
         All.SofteningGas = 0.5*pow((res_mass/1.0e10*All.HubbleParam)/(tot_nh_max/All.UnitDensity_in_cgs/All.HubbleParam/All.HubbleParam*All.Time*All.Time*All.Time/HYDROGEN_MASSFRAC*PROTONMASS),1.0/3.0);
 
      if(ThisTask == 0)
@@ -574,7 +574,7 @@ long long int find_next_outputtime(long long int ti_curr)
   double dens_dyn, next_time;
   double nh_local, nh_max, tot_nh_max;
 
-  res_mass = 0.7;
+  res_mass = All.RefinementMass;
   //dyn_fraction = 1.e0;
   dyn_fraction = 2.e-1;
   //dyn_fraction = 2.e-2;
