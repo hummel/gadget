@@ -70,11 +70,11 @@ void init(void)
 
   All.TotNumOfForces = 0;
   All.NumForcesSinceLastDomainDecomp = 0;
-/*
+
   if(All.ComovingIntegrationOn)
     if(All.PeriodicBoundariesOn == 1)
       check_omega();
-*/
+
   All.TimeLastStatistics = All.TimeBegin - All.TimeBetStatistics;
 
 #ifdef RAYTRACE_TG
