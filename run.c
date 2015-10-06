@@ -191,10 +191,7 @@ void run(void)
 
       MPI_Barrier(MPI_COMM_WORLD);
 
-      if(nsinks)
-        {
-          All.NumForcesSinceLastDomainDecomp = All.TotNumPart * All.TreeDomainUpdateFrequency + 1;
-        }
+      All.NumForcesSinceLastDomainDecomp = All.TotNumPart * All.TreeDomainUpdateFrequency + 1;
 /*SINKS*/
 
       advance_and_find_timesteps();	/* 'kick' active particles in
