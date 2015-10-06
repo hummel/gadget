@@ -182,7 +182,7 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
       numTT     = 0.e0;
       Temp_tot = 0.0;      
       
-      for(i = 1; i <= N_gas; i++)
+      for(i = 0; i < N_gas; i++)
 	{      
           
           n_acc=0;
@@ -273,7 +273,7 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 	      r_sink_phys = r_sink * All.Time / All.HubbleParam;
 
 	      
-	      for(k = 1; k <= i-1; k++)
+	      for(k = 0; k <= i-1; k++)
 		{
 		  d_sink = sqrt((P[k].Pos[0] - x_sink)*(P[k].Pos[0] - x_sink) + (P[k].Pos[1] - y_sink)*(P[k].Pos[1] - y_sink) + (P[k].Pos[2] - z_sink)*(P[k].Pos[2] - z_sink));
 
@@ -366,13 +366,11 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 		      
 		      N_gas   -= 1;
 		      NumPart -= 1;
-		      All.TotN_gas   -= 1;
-		      All.TotNumPart -= 1;
                       header.npart[0] -= 1;
                       header.npartTotal[0] -= 1;
                       All.MassTable[0] = 0.e0;		     
  
-		      for(g = k; g <= NumPart; g++) 
+		      for(g = k; g < NumPart; g++)
 			{
 
 			  P[g].Pos[0] = P[g+1].Pos[0];
@@ -415,7 +413,7 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 #endif 
 			}
 		      
-		      for(g = k; g <= N_gas; g++) 
+		      for(g = k; g < N_gas; g++)
 			{	       
 #ifndef POLYTROPE
                           SphP[g].Entropy = SphP[g+1].Entropy;
@@ -497,7 +495,7 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 	      /* JJ -- update the number of the sink particle, as it may have changed in the shifting of the struct already carried out. */
 	      num_sink_part = num_sink_part - local_sink_ngb;
 	      
-	      for(k = i+1; k <= N_gas; k++)
+	      for(k = i+1; k < N_gas; k++)
 		{
 	      d_sink = sqrt((P[k].Pos[0] - x_sink)*(P[k].Pos[0] - x_sink) + (P[k].Pos[1] - y_sink)*(P[k].Pos[1] - y_sink) + (P[k].Pos[2] - z_sink)*(P[k].Pos[2] - z_sink));
 
@@ -597,13 +595,11 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 			      
 			      N_gas   -= 1;
 			      NumPart -= 1;
-			      All.TotN_gas   -= 1;
-			      All.TotNumPart -= 1;
 			      header.npart[0] -= 1;
 			      header.npartTotal[0] -= 1;		     
 			      All.MassTable[0] = 0.e0;
 	 
-			      for(g = k; g <= NumPart; g++) 
+			      for(g = k; g < NumPart; g++)
 				{
 				  
 				  P[g].Pos[0] = P[g+1].Pos[0];
@@ -646,7 +642,7 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 	#endif 
 				}
 			      
-			      for(g = k; g <= N_gas; g++) 
+			      for(g = k; g < N_gas; g++)
 				{	       
 	#ifndef POLYTROPE
 				  SphP[g].Entropy = SphP[g+1].Entropy;
@@ -756,7 +752,7 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 	  
 	  if(my_rank != PCUsink_rank)
 	    {
-	      for(h = 1; h <= N_gas; h++)
+	      for(h = 0; h < N_gas; h++)
 		{
 		  d_sink = sqrt((P[h].Pos[0] - x_sink)*(P[h].Pos[0] - x_sink) + (P[h].Pos[1] - y_sink)*(P[h].Pos[1] - y_sink) + (P[h].Pos[2] - z_sink)*(P[h].Pos[2] - z_sink));
 
@@ -854,13 +850,11 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 		      
 		      N_gas   -= 1;
 		      NumPart -= 1;
-		      All.TotN_gas   -= 1;
-		      All.TotNumPart -= 1;
                       header.npart[0] -= 1;
                       header.npartTotal[0] -= 1;
                       All.MassTable[0] = 0.e0;		     
  
-		      for(g = h; g <= NumPart; g++) 
+		      for(g = h; g < NumPart; g++)
 			{		      
 			  
 			  P[g].Pos[0] = P[g+1].Pos[0];
@@ -903,7 +897,7 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
 #endif 
 			}
 		      
-		      for(g = h; g <= N_gas; g++) 
+		      for(g = h; g < N_gas; g++)
 			{	       
 #ifndef POLYTROPE
                           SphP[g].Entropy = SphP[g+1].Entropy;
@@ -1028,5 +1022,4 @@ UnitEnergy_in_cgs= UnitMass_in_g * pow(UnitLength_in_cm,2) / pow(UnitTime_in_s,2
     }
      
 }
-
 
