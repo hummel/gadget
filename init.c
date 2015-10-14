@@ -66,7 +66,7 @@ void init(void)
   All.NumCurrentTiStep = 0;	/* setup some counters */
   All.SnapshotFileCount = 0;
   if(RestartFlag == 2)
-    All.SnapshotFileCount = atoi(All.InitCondFile + strlen(All.InitCondFile) - 3) + 1;
+    All.SnapshotFileCount = atoi(All.InitCondFile + strlen(All.InitCondFile) - 4) + 1;
 
   All.TotNumOfForces = 0;
   All.NumForcesSinceLastDomainDecomp = 0;
